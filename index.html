@@ -2,21 +2,26 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" type="text/css" href="HaloHighlightsStyles.css" media="screen"/>
-	<title>Maps</title>
+	<link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
+	<title>Rich Media 2 Project</title>
 </head>
 <body>
 	<h1>Rich Media 2 Project</h1>
 	
 	<h2>Abstract</h2>
 	<p>
-		My game is a strategic card game where you and an opponent play cards on a board and have them attack each other. The first player to destroy the opponents leader wins.
+		My game is a digital adaptation of an analog game currently being developed in a team in Production Studio.
+		Currently, our team has 2 people working on this digital adaptation: Westley Waligora and Peter McNamara.
+	</p>
+	<p>
+		Our game is a strategic card game where you and an opponent play cards on a board and have them attack each other.
+		The first player to destroy the opponents leader wins.
 	</p>
 	
 	<h2>High Level Concept</h2>
 	<p>
-		My game is a card game where you place the cards onto a board and have them move and attack each other. 
-		Players have a deck that they draw from and a hand that they have cards in and a grave for where all of the destroyed cards go.
+		In our game, units on the board attack other units, and claim "mana springs" to gain players resources.
+		Players have a deck, a graveyard, their cards on the battlefield, and a special leader unit on the battlefield
 	</p>
 	
 	<h2>User Experience</h2>
@@ -28,7 +33,7 @@
 	</p>
 	<br />
 	<p>
-		The user experience will be great and each player will be able to see what cards are in their hands and the board in front of them. There will also be a text box that shows 
+		We aim to make user experience great and give each player quick access to cards in hand and on the board. There will also be a text box that shows 
 		the descriptions of each card so that people don't have to read the text on the cards and can instead just read them from the text box. Whenever a player wants to move or 
 		attack the game will automatically highlight the applicable targets so that players don't have to remember the rules as much.
 	</p>
@@ -40,7 +45,7 @@
 	
 	<h2>The Client</h2>
 	<p>
-		The client will be written in HTML, CSS, and JavaScript. The client will render the images for the board and the cards, but will not have any information about the other player. 
+		We will be using NODE.js, HTML, CSS, and JavaScript for both client and server side programming, possibly more. The client will render the images for the board and the cards, but will not have any information about the other player. 
 		The client will also gather player input and pass it along to the server. The client will also have a list of all the cards so that it can display the cards description and other 
 		text on in the description box.
 	</p>
@@ -55,12 +60,39 @@
 	
 	<h2>Inspiration</h2>
 	<p>
-		<a>Link!</a>
+		Our gameplay takes inspiration from 
+		<a href = "http://www.plaidhatgames.com/games/summoner-wars">Summoner Wars,</a>
+		<a href = "http://us.battle.net/hearthstone/en/">Hearthstone,</a>
+		<a href = "https://duelyst.com/">Duelyst,</a>
+		and many other card games.
+	</p>
+	<p>
+		Currently, our game draws from a handful of mythological sources for the lore. This includes 
+		Arthurian legends such as
+		<a href = "https://en.wikipedia.org/wiki/Excalibur">Excalibur</a>
+		and <a href = "https://en.wikipedia.org/wiki/Avalon">Avalon,</a>
+		English folklore such as
+		<a href = "https://en.wikipedia.org/wiki/Robin_Hood">Robin Hood,</a>
+		references to the Ulster Cycle of Irish Mythology in the form of 
+		<a href = "https://en.wikipedia.org/wiki/G%C3%A1e_Bulg">Gáe Bulg</a>
+		and <a href = "https://en.wikipedia.org/wiki/Cnoc_Meadha">Knockma,</a>
+		and finally old legendary Norse Viking <a href = "https://en.wikipedia.org/wiki/Ragnar_Lodbrok">Ragnar Lodbrok</a>		
 	</p>
 	
 	<h2>Libraries</h2>
 	<p>
-		Currently Unknown
+		Currently we're not sure of all the libraries we'll be using, but we will be using NODE.js as a framework
+	</p>
+	
+	<h2>Gameplay</h2>
+	<p>
+		At the beginning of the game, each player places their leader in the backmost row of the battlefield and draws a hand of cards. If they wish, they can take a "mulligan", which in our game is taking any number of cards in hand and putting them back into the deck, shuffling, and drawing that many cards. This can only be done once.
+	</p>
+	<p>
+		Normal units have an attack value and a health value. Units can move 2 spaces (not diagonally) and attack units in the 8 spaces surrounding them. Units die if they take more damage than they have health, and you win when you destroy your opponent's leader.
+	</p>
+	<p>
+		The analog game has 3 kinds of leaders with different rules, and 6 factions. We plan to begin with only 2 factions with the same leader type to simplify the digital game, which is meant only to be a demo for the analog game.
 	</p>
 	
 	<h2>Controls</h2>
@@ -76,7 +108,7 @@
 	
 	<h2>Assets</h2>
 	<p>
-		I am currently talking to some artists to get assets for the cards and game board.
+		We are currently talking to some artists to get assets for the cards and game board. We plan to use the same assets for the digital cards, and very similar assets for the board. Peter can do some minor visual work if anything else isn't present in the assets for the analog game.
 	</p>
 </body>
 </html>
