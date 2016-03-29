@@ -42,7 +42,9 @@
 	
 	<h2>Multi-user System</h2>
 	<p>
-		This game is a multi-user system because there will be two players that play together on a server. The server will also hold more than just one game at a time.
+		This game is a multi-user system because there will be two players that play together on a server. The server will also hold more than just one game at a time. This game will not 
+		support user accounts since there is no data that would need to be worth making player accounts for. We also just don't want to go through the trouble of supporting this. The game 
+		will only support players playing their current game, there is no overall metagame like leaderboards or anything like that.
 	</p>
 	
 	<h2>The Client</h2>
@@ -85,14 +87,14 @@
 	
 	<h2>Libraries</h2>
 	<p>
-		Currently we're not sure of all the libraries we'll be using, but we will be using NODE.js as a framework
+		We will be using MongoDB as a database to store and access all of the cards that we will be using. We will also be using NODE.js as a framework
 	</p>
 	<h2>Data Storage</h2>
 	<p>
 		We won't be storing any data about a user's card collection because there is none, there are 6 prebuilt decks in the analog version and a smaller amount in this version. We're going to begin with a prototype deck for debugging reasons, then recreate decks from the analog game.
 	</p>
 	<p>
-		The cards of the game will be handled by ...
+		The cards of the game will be handled by MongoDB and we will store each card as a Model in the DB with a name, health, attack, and other important things.
 	</p>
 	
 	<h2>Gameplay</h2>
