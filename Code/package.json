@@ -1,0 +1,17 @@
+{
+  "name": "springs_of_albion",
+  "version": "1.0.0",
+  "description": "Digital version of my production studio game",
+  "main": "src/app.js",
+  "dependencies": {},
+  "devDependencies": {
+    "jshint": "^2.9.1"
+  },
+  "scripts": {
+    "start": "node ./src/app.js",
+    "pretest": "jshint ./src",
+    "test": "echo \"Tests Complete\""
+  },
+  "author": "Westley Waligora and Peter Mcnamera",
+  "license": "ISC"
+}
