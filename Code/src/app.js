@@ -38,7 +38,7 @@ app.use(bodyParser.json());
 app.set('view engine', 'jade');
 
 //set the views path to the template directory (not shown in this example but needed for express to work)
-app.set('views', __dirname + '../../views');
+app.set('views', __dirname + '/views');
 
 //call favicon with the favicon path and tell the app to use it
 app.use(favicon(__dirname + '../../client/img/favicon.png'));
