@@ -16,18 +16,37 @@ var CardSchema = new mongoose.Schema(
 		set: setName
 	},
 	
-	age: 
+	flavor:
+	{
+		type: String,
+		required: true,
+		trim: true
+	},
+	
+	effect:
+	{
+		type: JavaScript
+	},
+	
+	attack:
 	{
 		type: Number,
 		min: 0,
 		required: true
 	},
 	
-	color:
+	health:
+	{
+		type: Number,
+		min: 0,
+		required: true
+	},
+	
+	image:
 	{
 		type: String,
-		required: false,
-		trim: false,
+		required: true,
+		trim: true
 	},
 	
 	owner:
