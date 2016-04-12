@@ -8,6 +8,7 @@ var setName = function(name)
 
 var CardSchema = new mongoose.Schema(
 {
+	//The name of the card
 	name: 
 	{
 		type: String,
@@ -15,47 +16,46 @@ var CardSchema = new mongoose.Schema(
 		trim: true,
 		set: setName
 	},
-	
+	//Flavor text
 	flavor:
 	{
 		type: String,
 		required: true,
 		trim: true
 	},
-	
+	//This is where the card effect javascript is stored, breaking a normal rule of databases of not storing code
 	effect:
 	{
-		type: JavaScript
 	},
-	
+	//Damage it deals
 	attack:
 	{
 		type: Number,
 		min: 0,
 		required: true
 	},
-	
+	//Damage it can withstand
 	health:
 	{
 		type: Number,
 		min: 0,
 		required: true
 	},
-	
+	//Card art
 	image:
 	{
 		type: String,
 		required: true,
 		trim: true
 	},
-	
+	//The player who used this card
 	owner:
 	{
 		type: mongoose.Schema.ObjectId,
 		required: true,
 		ref: "Account"
 	},
-	
+	//When this card was initialized
 	createdData:
 	{
 		type: Date,
