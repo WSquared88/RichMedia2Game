@@ -1,6 +1,17 @@
 *{
-	color: "red";
-	font-size: 300px;
+	color: black;
+	font-size: 12px;
+	background-color: #CAD7DB;
+}
+
+#title
+{
+	padding: 1em;
+	color: #27AAD6;
+	background-color: #E8D9DF;
+	text-align: center;
+	border: solid;
+	font-size: 50px;
 }
 
 #gameSpace
