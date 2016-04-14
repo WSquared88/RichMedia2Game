@@ -1,0 +1,24 @@
+{
+  "name": "syncing_data_2",
+  "version": "1.0.0",
+  "description": "Cool multiplayer app",
+  "main": "src/index.js",
+  "dependencies": {
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node ./src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WSquared88/SyncingData2.git"
+  },
+  "author": "Wes Waligora",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WSquared88/SyncingData2/issues"
+  },
+  "homepage": "https://github.com/WSquared88/SyncingData2#readme"
+}

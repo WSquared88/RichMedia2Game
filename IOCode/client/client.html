@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style>
+		body
+		{
+			background-color: lightgrey;
+			margin: auto;
+			overflow: hidden;
+		}
+		
+		canvas
+		{
+			height: 100%;
+			background-color: white;
+			font-family: "Arial";
+			font-size: 2em;
+		}
+		
+		textarea
+		{
+			float: right;
+		}
+	</style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        "use strict";
+    
+        var canvas;
+        var ctx;
+        var socket;
+		var squares = {};
+		var allPoints = {};
+		var points = 0;
+		var flag = {};
+		var animationID;
+		var wIsPressed = false;
+		var aIsPressed = false;
+		var sIsPressed = false;
+		var dIsPressed = false;
+		var area;
+
+        var square = {
+            id: new Date().getTime(),
+			time: new Date().getTime(),
+            x: Math.random()*400,
+            y: Math.random()*400,
+            height: 20,
+            width: 20,
+			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)",
+			points: 0
+        };
+		
+		function redraw()
+		{
+			ctx.clearRect(0,0,canvas.width, canvas.height);
+			var key = Object.keys(squares);
+			var html = "";
+			
+			ctx.fillStyle = flag.color;
+			ctx.beginPath();
+			ctx.arc(flag.x, flag.y, flag.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.closePath();
+			
+			console.log("key length"+key.length);
+			for(var i = 0;i<key.length;i++)
+			{
+				console.log("square "+i);
+				ctx.fillStyle = squares[key[i]].color;
+				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
+				html += "Color: "+squares[key[i]].color+" Score: " + allPoints[squares[key[i]].id] + "\n";
+			}
+			
+			ctx.fillStyle = "black";
+			ctx.font = "20px Arial";
+			ctx.fillText("Score: " + square.points, 10, 30);
+		}
+		
+		function update()
+		{
+			animationID = requestAnimationFrame(update);
+			if(wIsPressed)
+			{
+				square.y -= 1;
+			}
+			
+			if(aIsPressed)
+			{
+				square.x -= 1;
+			}
+			
+			if(sIsPressed)
+			{
+				square.y += 1;
+			}
+			
+			if(dIsPressed)
+			{
+				square.x += 1;
+			}
+			
+			if(wIsPressed || aIsPressed || sIsPressed || dIsPressed)
+			{
+				sendPos();
+			}
+		}
+		
+		function sendPos()
+		{
+			var message = 
+			{
+				message: "",
+				id: square.id,
+				data: square,
+				time: new Date().getTime()
+			};
+			
+			socket.emit("updatePos", message);
+		}
+        
+        function init() 
+		{
+            canvas = document.querySelector("#canvas");
+            ctx = canvas.getContext("2d");
+			
+			ctx.canvas.width = window.innerWidth;
+			ctx.canvas.height = window.innerHeight;
+			
+			area = document.querySelector("textarea");
+			
+			ctx.font = "20px Arial";
+			
+			socket = io.connect();
+			socket.on("connect", function()
+			{
+				allPoints[square.id] = 0;
+				
+				var message = 
+				{
+					message: "",
+					id: square.id,
+					data: square
+				};
+				socket.emit("init", message);
+			});
+			
+			socket.on("allSquares", function(data)
+			{
+				squares = data.data;
+				flag = data.flag;
+				
+				redraw();
+			});
+			
+			socket.on("updatePoints", function(data)
+			{
+				console.log("points " + data.data[square.id]);
+				
+				if(data.data[square.id] >= square.points)
+				{
+					//squares = data.data;
+					square.points = data.data[square.id];
+					allPoints = data.data;
+				}
+				flag = data.flag;
+			});
+			
+			document.onkeydown = function(e)
+			{
+				var charCode = String.fromCharCode(e.keyCode);
+				if(charCode == "W")
+				{
+					wIsPressed = true;
+				}
+				
+				if(charCode == "A")
+				{
+					aIsPressed = true;
+				}
+				
+				if(charCode == "S")
+				{
+					sIsPressed = true;
+				}
+				
+				if(charCode == "D")
+				{
+					dIsPressed = true;
+				}
+			};
+			
+			document.onkeyup = function(e)
+			{
+				var charCode = String.fromCharCode(e.keyCode);
+				if(charCode == "W")
+				{
+					wIsPressed = false;
+				}
+				
+				if(charCode == "A")
+				{
+					aIsPressed = false;
+				}
+				
+				if(charCode == "S")
+				{
+					sIsPressed = false;
+				}
+				
+				if(charCode == "D")
+				{
+					dIsPressed = false;
+				}
+			};
+			
+			requestAnimationFrame(update);
+        }
+
+    window.onload = init;
+	window.onresize = function()
+	{
+		ctx.canvas.width = window.innerWidth;
+		ctx.canvas.height = window.innerHeight;
+		redraw();
+	};
+	
+	window.onbeforeunload = function()
+	{
+		var message = 
+		{
+			message: "",
+			id: square.id,
+			data: ""
+		};
+		socket.emit("leaving", message);
+	};
+    </script>
+</head>
+<body>
+    <canvas id="canvas">Please use an HTML 5 browser</canvas>
+</body>
+</html>
