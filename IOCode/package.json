@@ -1,24 +1,19 @@
 {
-  "name": "syncing_data_2",
+  "name": "springs_of_albion",
   "version": "1.0.0",
-  "description": "Cool multiplayer app",
-  "main": "src/index.js",
+  "description": "A digital version of my production studio game",
+  "main": "./src/index.js",
   "dependencies": {
     "socket.io": "^1.4.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+	"jshint": "^2.9.1"
+  },
   "scripts": {
     "start": "node ./src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "jshint ./src",
+    "test": "echo \"Tests Complete\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WSquared88/SyncingData2.git"
-  },
-  "author": "Wes Waligora",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/WSquared88/SyncingData2/issues"
-  },
-  "homepage": "https://github.com/WSquared88/SyncingData2#readme"
+  "author": "Wes Waligora and Peter McNamera",
+  "license": "ISC"
 }

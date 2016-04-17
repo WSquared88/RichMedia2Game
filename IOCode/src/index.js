@@ -10,6 +10,8 @@ var cardsInHand = {};
 var board = {};
 var squares = {};
 var points = {};
+var rooms = [];
+var roomNum = 0;
 
 var flag = 
 {
@@ -68,7 +70,7 @@ function checkCollision(id)
 		flag: flag
 	};
 	
-	io.sockets.in("room1").emit("updatePoints", message);
+	io.sockets.in(socket.room).emit("updatePoints", message);
 }
 
 function moveFlag()
@@ -77,12 +79,40 @@ function moveFlag()
 	flag.y = Math.random()*400;
 }
 
+function enterRoom(socket)
+{
+	console.log("joining a room");
+	var key = Object.keys(rooms);
+	
+	for(var i = 0;i<key.length;i++)
+	{
+		console.log("looking into room "+rooms[key[i]]);
+		if(io.sockets.adapter.rooms[rooms[key[i]]].length < 2)
+		{
+			console.log("joining existing room " +rooms[key[i]]);
+			socket.join(rooms[key[i]]);
+			return;
+		}
+		console.log("finished looking into room "+rooms[key[i]]);
+	}
+	
+	//Look at this later
+	//http://stackoverflow.com/questions/19156636/node-js-and-socket-io-creating-room
+	
+	var roomName = "room"+roomNum;
+	socket.join(roomName);
+	rooms.push(roomName);
+	socket.room = roomName;
+	roomNum++;
+	console.log("joined "+roomName);
+}
+
 io.on("connection", function(socket)
 {
-	socket.join("room1");
-	
 	socket.on("init", function(data)
 	{
+		enterRoom(socket);
+		
 		squares[data.id] = data.data;
 		points[data.id] = 0;
 		var message = 
@@ -99,8 +129,8 @@ io.on("connection", function(socket)
 			flag: flag
 		};
 		
-		io.sockets.in("room1").emit("allSquares", message);
-		io.sockets.in("room1").emit("updatePoints", pointMessage);
+		io.sockets.in(socket.room).emit("allSquares", message);
+		io.sockets.in(socket.room).emit("updatePoints", pointMessage);
 	});
 	
 	socket.on("updatePos", function(data)
@@ -118,7 +148,7 @@ io.on("connection", function(socket)
 				flag: flag
 			};
 		
-			io.sockets.in("room1").emit("allSquares", message);
+			io.sockets.in(socket.room).emit("allSquares", message);
 		}
 	});
 	
@@ -141,13 +171,21 @@ io.on("connection", function(socket)
 			flag: flag
 		};
 		
-		io.sockets.in("room1").emit("allSquares", message);
+		io.sockets.in(socket.room).emit("allSquares", message);
 	});
 	
 	socket.on("disconnect", function(data)
 	{
-		console.log(data);
-		socket.leave("room1");
+		console.log("data " + data);
+		socket.leave(socket.room);
+		if(!io.sockets.adapter.rooms[socket.room])
+		{
+			rooms.splice(rooms.indexOf(socket.room), 1);
+			console.log("deleting " + socket.room);
+			console.log("rooms " + rooms);
+		}
+		
+		console.log("Done disconnecting");
 	});
 });
 
