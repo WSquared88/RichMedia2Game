@@ -35,11 +35,6 @@
 		font-family: "Arial";
 		font-size: 2em;
 	}
-
-	textarea
-	{
-		float: right;
-	}
 	</style>
     <script>
         "use strict";
@@ -47,52 +42,46 @@
         var canvas;
         var ctx;
         var socket;
-		var squares = {};
-		var allPoints = {};
+		var cardsInHand = {};
+		var numCardsInOpponentsHand = 0;
 		var points = 0;
-		var flag = {};
 		var animationID;
 		var wIsPressed = false;
 		var aIsPressed = false;
 		var sIsPressed = false;
 		var dIsPressed = false;
-		var area;
 
-        var square = {
-            id: new Date().getTime(),
+        var player = {
+            id: 0,
 			time: new Date().getTime(),
-            x: Math.random()*400,
-            y: Math.random()*400,
-            height: 20,
-            width: 20,
 			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)",
 			points: 0
         };
 		
 		function redraw()
 		{
-			ctx.clearRect(0,0,canvas.width, canvas.height);
-			var key = Object.keys(squares);
-			var html = "";
-			
-			ctx.fillStyle = flag.color;
-			ctx.beginPath();
-			ctx.arc(flag.x, flag.y, flag.radius, 0, 2*Math.PI);
-			ctx.fill();
-			ctx.closePath();
-			
-			console.log("key length"+key.length);
-			for(var i = 0;i<key.length;i++)
-			{
-				console.log("square "+i);
-				ctx.fillStyle = squares[key[i]].color;
-				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
-				html += "Color: "+squares[key[i]].color+" Score: " + allPoints[squares[key[i]].id] + "\n";
-			}
-			
-			ctx.fillStyle = "black";
-			ctx.font = "20px Arial";
-			ctx.fillText("Score: " + square.points, 10, 30);
+			//ctx.clearRect(0,0,canvas.width, canvas.height);
+			//var key = Object.keys(squares);
+			//var html = "";
+			//
+			//ctx.fillStyle = flag.color;
+			//ctx.beginPath();
+			//ctx.arc(flag.x, flag.y, flag.radius, 0, 2*Math.PI);
+			//ctx.fill();
+			//ctx.closePath();
+			//
+			//console.log("key length"+key.length);
+			//for(var i = 0;i<key.length;i++)
+			//{
+			//	console.log("square "+i);
+			//	ctx.fillStyle = squares[key[i]].color;
+			//	ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
+			//	html += "Color: "+squares[key[i]].color+" Score: " + allPoints[squares[key[i]].id] + "\n";
+			//}
+			//
+			//ctx.fillStyle = "black";
+			//ctx.font = "20px Arial";
+			//ctx.fillText("Score: " + square.points, 10, 30);
 		}
 		
 		function update()
@@ -130,8 +119,8 @@
 			var message = 
 			{
 				message: "",
-				id: square.id,
-				data: square,
+				id: player.id,
+				data: player,
 				time: new Date().getTime()
 			};
 			
@@ -146,43 +135,26 @@
 			ctx.canvas.width = window.innerWidth;
 			ctx.canvas.height = window.innerHeight;
 			
-			area = document.querySelector("textarea");
-			
 			ctx.font = "20px Arial";
 			
 			socket = io.connect();
 			socket.on("connect", function()
 			{
-				allPoints[square.id] = 0;
-				
+				player.id = socket.id;
 				var message = 
 				{
 					message: "",
-					id: square.id,
-					data: square
+					id: player.id,
+					data: player
 				};
+				
 				socket.emit("init", message);
 			});
 			
-			socket.on("allSquares", function(data)
+			socket.on("connected", function(message)
 			{
-				squares = data.data;
-				flag = data.flag;
-				
-				redraw();
-			});
-			
-			socket.on("updatePoints", function(data)
-			{
-				console.log("points " + data.data[square.id]);
-				
-				if(data.data[square.id] >= square.points)
-				{
-					//squares = data.data;
-					square.points = data.data[square.id];
-					allPoints = data.data;
-				}
-				flag = data.flag;
+				console.dir("Connected to server ");
+				console.dir(message);
 			});
 			
 			document.onkeydown = function(e)
@@ -242,17 +214,6 @@
 		ctx.canvas.width = window.innerWidth;
 		ctx.canvas.height = window.innerHeight;
 		redraw();
-	};
-	
-	window.onbeforeunload = function()
-	{
-		var message = 
-		{
-			message: "",
-			id: square.id,
-			data: ""
-		};
-		socket.emit("leaving", message);
 	};
     </script>
 </head>

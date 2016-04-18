@@ -12,14 +12,7 @@ var squares = {};
 var points = {};
 var rooms = [];
 var roomNum = 0;
-
-var flag = 
-{
-	x: Math.random()*400,
-    y: Math.random()*400,
-	radius: 10,
-	color: "purple"
-};
+var players = {};
 
 function handler(req, res)
 {
@@ -37,31 +30,15 @@ function handler(req, res)
 
 function checkCollision(id)
 {
-	//if(Math.abs(squares[id].x - flag.x) > flag.radius + squares[id].width/2)
-	//{
-	//	return;
-	//}
-	
 	if(Math.abs(squares[id].x + squares[id].width/2 - flag.x) > flag.radius + squares[id].width/2)
 	{
 		return;
 	}
 	
-	//if(Math.abs(squares[id].y - flag.y) > flag.radius + squares[id].height/2)
-	//{
-	//	return;
-	//}
-	
 	if(Math.abs(squares[id].y + squares[id].height/2 - flag.y) > flag.radius + squares[id].height/2)
 	{
 		return;
 	}
-	
-	console.log("before points " + points[id]);
-	points[id] += 1;
-	console.log("after points " + points[id]);
-	
-	moveFlag();
 	
 	var message = 
 	{
@@ -73,12 +50,7 @@ function checkCollision(id)
 	io.sockets.in(socket.room).emit("updatePoints", message);
 }
 
-function moveFlag()
-{
-	flag.x = Math.random()*400;
-	flag.y = Math.random()*400;
-}
-
+//Done, adds a player to a room with a max of 2 people per room
 function enterRoom(socket)
 {
 	console.log("joining a room");
@@ -107,77 +79,42 @@ function enterRoom(socket)
 	console.log("joined "+roomName);
 }
 
+function generateDeck()
+{
+	console.log("generating deck");
+}
+
 io.on("connection", function(socket)
 {
 	socket.on("init", function(data)
 	{
 		enterRoom(socket);
 		
-		squares[data.id] = data.data;
-		points[data.id] = 0;
-		var message = 
-		{
-			message: "",
-			data: squares,
-			flag: flag
-		};
+		console.log("Socket ID " + player.id);
 		
-		var pointMessage = 
+		players[player.id] = 
 		{
-			message: "",
-			data: points,
-			flag: flag
-		};
-		
-		io.sockets.in(socket.room).emit("allSquares", message);
-		io.sockets.in(socket.room).emit("updatePoints", pointMessage);
-	});
-	
-	socket.on("updatePos", function(data)
-	{
-		if(squares[data.id].time < data.time)
-		{
-			squares[data.id] = data.data;
-			
-			checkCollision(data.id);
-			
-			var message = 
-			{
-				message: "",
-				data: squares,
-				flag: flag
-			};
-		
-			io.sockets.in(socket.room).emit("allSquares", message);
+			player: data.data,
+			deck: generateDeck(),
+			isActivePlayer: false
 		}
-	});
-	
-	socket.on("updateScore", function(data)
-	{
-		if( data.score > points)
-		{
-			points = data.score;
-		}
-	});
-	
-	socket.on("leaving", function(data)
-	{
-		delete squares[data.id];
 		
 		var message = 
 		{
 			message: "",
-			data: squares,
-			flag: flag
+			data: players[socket.id]
 		};
 		
-		io.sockets.in(socket.room).emit("allSquares", message);
+		io.sockets.connected[socket.id].emit("connected", message);
+		//io.sockets.in(socket.room).emit("allSquares", message);
+		//io.sockets.in(socket.room).emit("updatePoints", pointMessage);
 	});
 	
 	socket.on("disconnect", function(data)
 	{
 		console.log("data " + data);
 		socket.leave(socket.room);
+		
 		if(!io.sockets.adapter.rooms[socket.room])
 		{
 			rooms.splice(rooms.indexOf(socket.room), 1);
