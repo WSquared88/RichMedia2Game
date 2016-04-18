@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<style>
-		body
-		{
-			background-color: lightgrey;
-			margin: auto;
-			overflow: hidden;
-		}
-		
-		canvas
-		{
-			height: 100%;
-			background-color: white;
-			font-family: "Arial";
-			font-size: 2em;
-		}
-		
-		textarea
-		{
-			float: right;
-		}
-	</style>
     <script src="/socket.io/socket.io.js"></script>
+	<!-- <link rel='stylesheet', href='assets/style.css' > -->
+	<style>
+	
+	*{
+		color: black;
+		font-size: 12px;
+		background-color: #CAD7DB;
+	}
+
+	#title
+	{
+		padding: 1em;
+		color: #27AAD6;
+		background-color: #E8D9DF;
+		text-align: center;
+		border: solid;
+		font-size: 50px;
+	}
+
+	body
+	{
+		background-color: lightgrey;
+		margin: auto;
+		overflow: hidden;
+	}
+
+	canvas
+	{
+		width: 100%;
+		background-color: white;
+		font-family: "Arial";
+		font-size: 2em;
+	}
+
+	textarea
+	{
+		float: right;
+	}
+	</style>
     <script>
         "use strict";
     
@@ -82,28 +100,29 @@
 			animationID = requestAnimationFrame(update);
 			if(wIsPressed)
 			{
-				square.y -= 1;
+				square.y -= 3;
 			}
 			
 			if(aIsPressed)
 			{
-				square.x -= 1;
+				square.x -= 3;
 			}
 			
 			if(sIsPressed)
 			{
-				square.y += 1;
+				square.y += 3;
 			}
 			
 			if(dIsPressed)
 			{
-				square.x += 1;
+				square.x += 3;
 			}
 			
-			if(wIsPressed || aIsPressed || sIsPressed || dIsPressed)
+			sendPos();
+			/*if(wIsPressed || aIsPressed || sIsPressed || dIsPressed)
 			{
 				sendPos();
-			}
+			}*/
 		}
 		
 		function sendPos()
@@ -238,6 +257,7 @@
     </script>
 </head>
 <body>
+	<h1 id = "title" >Springs of Albion</h1>
     <canvas id="canvas">Please use an HTML 5 browser</canvas>
 </body>
 </html>
