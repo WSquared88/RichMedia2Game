@@ -99,33 +99,72 @@ function useCard(player, card)
 	players[player.id] = player;
 }
 
+function findOpponent(currPlayer, socket)
+{
+	for(var player in io.sockets.adapter.rooms[socket.room])
+	{
+		if(player.id !== currPlayer.id)
+		{
+			return player;
+		}
+	}
+}
+
 io.on("connection", function(socket)
 {
 	socket.on("init", function(data)
 	{
 		enterRoom(socket);
 		
-		console.log("Socket ID " + player.id);
+		console.log("Socket ID " + socket.id);
 		
-		players[player.id] = 
+		players[socket.id] = 
 		{
 			player: data.data,
-			playerID: player.id,
+			playerID: socket.id,
 			cardsInHand: {},
 			deck: generateDeck(),
 			grave: {},
 			isActivePlayer: false
-		}
+		};
 		
 		var message = 
 		{
 			message: "",
-			data: players[socket.id]
+			data: players[socket.id],
+			id: socket.id
 		};
 		
 		io.sockets.connected[socket.id].emit("connected", message);
 		//io.sockets.in(socket.room).emit("allSquares", message);
 		//io.sockets.in(socket.room).emit("updatePoints", pointMessage);
+	});
+	
+	socket.on("nextTurn", function(player)
+	{
+		var message = 
+		{
+			data: ""
+		};
+		
+		if(players[player.id].isActivePlayer)
+		{
+			var opponent = findOpponent(player, socket);
+			if(opponent)
+			{
+				players[player.id].isActivePlayer = false;
+				players[opponent.id].isActivePlayer = true;
+				io.sockets.connected[opponent.id].emit("startTurn");
+				io.sockets.connected[player.id].emit("endTurn");
+				return;
+			}
+			message.data = "You do not have an opponent.";
+			io.sockets.connected[player.id].emit("exception", message);
+			return;
+		}
+		
+		message.data = "You are not the active turn player, you cannot end your turn.";
+		io.sockets.connected[socket.id].emit("exception", message);
 	});
 	
 	socket.on("disconnect", function(data)

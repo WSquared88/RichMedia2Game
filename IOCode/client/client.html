@@ -89,22 +89,23 @@
 			animationID = requestAnimationFrame(update);
 			if(wIsPressed)
 			{
-				square.y -= 3;
+				//square.y -= 3;
+				socket.emit("nextTurn", player);
 			}
 			
 			if(aIsPressed)
 			{
-				square.x -= 3;
+				//square.x -= 3;
 			}
 			
 			if(sIsPressed)
 			{
-				square.y += 3;
+				//square.y += 3;
 			}
 			
 			if(dIsPressed)
 			{
-				square.x += 3;
+				//square.x += 3;
 			}
 			
 			sendPos();
@@ -140,11 +141,9 @@
 			socket = io.connect();
 			socket.on("connect", function()
 			{
-				player.id = socket.id;
 				var message = 
 				{
 					message: "",
-					id: player.id,
 					data: player
 				};
 				
@@ -154,7 +153,13 @@
 			socket.on("connected", function(message)
 			{
 				console.dir("Connected to server ");
+				player.id = message.id;
 				console.dir(message);
+			});
+			
+			socket.on("exception", function(message)
+			{
+				console.log(message.data);
 			});
 			
 			document.onkeydown = function(e)
