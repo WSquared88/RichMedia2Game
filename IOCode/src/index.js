@@ -8,8 +8,6 @@ app.listen(PORT);
 var numCardsInEnemyHand = 0;
 var cardsInHand = {};
 var board = {};
-var squares = {};
-var points = {};
 var rooms = [];
 var roomNum = 0;
 var players = {};
@@ -79,9 +77,26 @@ function enterRoom(socket)
 	console.log("joined "+roomName);
 }
 
+//make the players deck and randomize the deck order
 function generateDeck()
 {
 	console.log("generating deck");
+}
+
+//When the player draws a card put the first card from the deck into the hand and then remove that from the deck
+function drawCard(player)
+{
+	player.cardsInHand.push(player.deck[0]);
+	player.deck.splice(0,1);
+	players[player.id] = player;
+}
+
+//When a player plays a card remove it from their hand, put it on the board(not in yet), and activate the effect
+function useCard(player, card)
+{
+	console.log("activating card effect");
+	player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
+	players[player.id] = player;
 }
 
 io.on("connection", function(socket)
@@ -95,7 +110,10 @@ io.on("connection", function(socket)
 		players[player.id] = 
 		{
 			player: data.data,
+			playerID: player.id,
+			cardsInHand: {},
 			deck: generateDeck(),
+			grave: {},
 			isActivePlayer: false
 		}
 		
