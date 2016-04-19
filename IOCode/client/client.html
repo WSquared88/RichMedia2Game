@@ -90,6 +90,7 @@
 			if(wIsPressed)
 			{
 				//square.y -= 3;
+				console.log("player id " + player.id);
 				socket.emit("nextTurn", player);
 			}
 			
@@ -157,7 +158,22 @@
 				console.dir(message);
 			});
 			
+			socket.on("startTurn", function()
+			{
+				console.log("Your turn has started");
+			});
+			
+			socket.on("endTurn", function()
+			{
+				console.log("Your turn has ended");
+			});
+			
 			socket.on("exception", function(message)
+			{
+				console.log(message.data);
+			});
+			
+			socket.on("log", function(message)
 			{
 				console.log(message.data);
 			});

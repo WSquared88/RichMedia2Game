@@ -61,6 +61,7 @@ function enterRoom(socket)
 		{
 			console.log("joining existing room " +rooms[key[i]]);
 			socket.join(rooms[key[i]]);
+			socket.room = rooms[key[i]];
 			return;
 		}
 		console.log("finished looking into room "+rooms[key[i]]);
@@ -99,13 +100,19 @@ function useCard(player, card)
 	players[player.id] = player;
 }
 
+//If the player has an opponent then it returns them, otherwise it returns nothing.
 function findOpponent(currPlayer, socket)
 {
-	for(var player in io.sockets.adapter.rooms[socket.room])
+	console.log("socket room " +socket.room);
+	var room = io.sockets.adapter.rooms[socket.room];
+	console.log("opponent room "+room);
+	
+	for(var playerID in io.sockets.adapter.rooms[socket.room].sockets)
 	{
-		if(player.id !== currPlayer.id)
+		if(playerID && playerID != currPlayer.id)
 		{
-			return player;
+			console.log("curr player id " + currPlayer.id + " player id " + playerID);
+			return players[playerID];
 		}
 	}
 }
@@ -121,7 +128,7 @@ io.on("connection", function(socket)
 		players[socket.id] = 
 		{
 			player: data.data,
-			playerID: socket.id,
+			id: socket.id,
 			cardsInHand: {},
 			deck: generateDeck(),
 			grave: {},
@@ -135,9 +142,25 @@ io.on("connection", function(socket)
 			id: socket.id
 		};
 		
+		console.log("looking for opponent "+socket);
+		var opponent = findOpponent(players[socket.id], socket);
+		if(opponent)
+		{
+			console.log("Randomizing turn player");
+			if(Math.random()*2 < 1)
+			{
+				opponent.isActivePlayer = true;
+				players[opponent.id] = opponent;
+				io.sockets.connected[opponent.id].emit("startTurn");
+			}
+			else
+			{
+				players[socket.id].isActivePlayer = true;
+				io.sockets.connected[socket.id].emit("startTurn");
+			}
+		}
+		
 		io.sockets.connected[socket.id].emit("connected", message);
-		//io.sockets.in(socket.room).emit("allSquares", message);
-		//io.sockets.in(socket.room).emit("updatePoints", pointMessage);
 	});
 	
 	socket.on("nextTurn", function(player)
@@ -149,6 +172,7 @@ io.on("connection", function(socket)
 		
 		if(players[player.id].isActivePlayer)
 		{
+			//console.log("nextTurn socket " +socket);
 			var opponent = findOpponent(player, socket);
 			if(opponent)
 			{
