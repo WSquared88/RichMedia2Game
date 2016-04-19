@@ -77,9 +77,20 @@ function enterRoom(socket)
 }
 
 //make the players deck and randomize the deck order
-function generateDeck()
+function generateDeck(id)
 {
-	console.log("generating deck");
+	//Generate Deck
+	for(var i = 0; i<30; i++)
+	{
+		players[id].deck[i] = 
+		{
+			name: "Def.No." + i,
+			cost: Math.floor(Math.random() * 6)
+		};
+	}
+	console.log("New Deck: ");
+	console.log(players[id].deck);
+	//randomize deck
 }
 
 //When the player draws a card put the first card from the deck into the hand and then remove that from the deck
@@ -128,10 +139,11 @@ io.on("connection", function(socket)
 			player: data.data,
 			id: socket.id,
 			cardsInHand: {},
-			deck: generateDeck(),
+			deck: {},
 			grave: {},
 			isActivePlayer: false
 		};
+		generateDeck(socket.id);
 		
 		var message = 
 		{
