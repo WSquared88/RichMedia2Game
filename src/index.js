@@ -91,7 +91,35 @@ function generateDeck(id)
 	console.log("New Deck: ");
 	console.log(players[id].deck);
 	//randomize deck
+	shuffle(id);
 }
+
+//shuffle a deck, input is a player
+function shuffle(id)
+{
+	//How many times we shuffle, between 5 and 15
+	var repeats = 5 + Math.floor(Math.random() * 11);
+	//place in the deck
+	var k;
+	//temp card holder
+	var temp;
+	
+	//http://stackoverflow.com/questions/5533192/how-to-get-object-length
+	console.log(players[id].deck.keys(a).length);
+	
+	//The actual shuffle
+	for(var i = 0; i < repeats; i++)
+		for(var j = 0; j < players[id].deck.keys(a).length; j++) {
+			k = Math.floor(Math.random() * players[i].deck.keys(a).length);
+			temp = this.cards[j];
+			players[i].deck[j] = this.cards[k];
+			players[i].deck[k] = temp;
+	}
+	
+	console.log("Shuffled Deck: ");
+	console.log(players[id].deck);
+}
+
 
 //When the player draws a card put the first card from the deck into the hand and then remove that from the deck
 function drawCard(player)
