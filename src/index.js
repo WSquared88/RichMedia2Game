@@ -5,8 +5,6 @@ var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 
 app.listen(PORT);
 
-var numCardsInEnemyHand = 0;
-var cardsInHand = {};
 var board = {};
 var rooms = [];
 var roomNum = 0;

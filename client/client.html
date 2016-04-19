@@ -50,6 +50,7 @@
 		var aIsPressed = false;
 		var sIsPressed = false;
 		var dIsPressed = false;
+		var myTurn = false;
 
         var player = {
             id: 0,
@@ -58,30 +59,26 @@
 			points: 0
         };
 		
-		function redraw()
+		function draw()
 		{
-			//ctx.clearRect(0,0,canvas.width, canvas.height);
-			//var key = Object.keys(squares);
-			//var html = "";
-			//
-			//ctx.fillStyle = flag.color;
+			ctx.fillStyle = "rgba(100, 150, 200, 1)";
+			ctx.clearRect(0,0,canvas.width, canvas.height);
+			
 			//ctx.beginPath();
-			//ctx.arc(flag.x, flag.y, flag.radius, 0, 2*Math.PI);
+			//ctx.arc(200, 200, 100, 0, 2*Math.PI);
 			//ctx.fill();
 			//ctx.closePath();
-			//
-			//console.log("key length"+key.length);
-			//for(var i = 0;i<key.length;i++)
-			//{
-			//	console.log("square "+i);
-			//	ctx.fillStyle = squares[key[i]].color;
-			//	ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
-			//	html += "Color: "+squares[key[i]].color+" Score: " + allPoints[squares[key[i]].id] + "\n";
-			//}
-			//
-			//ctx.fillStyle = "black";
-			//ctx.font = "20px Arial";
-			//ctx.fillText("Score: " + square.points, 10, 30);
+			
+			ctx.fillStyle = "black";
+			ctx.font = "20px Arial";
+			if(myTurn)
+			{
+				ctx.fillText("Your Turn", 10, 30);
+				ctx.fillText("Press W to pass the turn", 10, 50);
+			}else{
+				ctx.fillText("Opponent's Turn", 10, 30);
+			}
+			
 		}
 		
 		function update()
@@ -114,6 +111,7 @@
 			{
 				sendPos();
 			}*/
+			draw();
 		}
 		
 		function sendPos()
@@ -161,11 +159,13 @@
 			socket.on("startTurn", function()
 			{
 				console.log("Your turn has started");
+				myTurn = true;
 			});
 			
 			socket.on("endTurn", function()
 			{
 				console.log("Your turn has ended");
+				myTurn = false;
 			});
 			
 			socket.on("exception", function(message)
@@ -234,7 +234,7 @@
 	{
 		ctx.canvas.width = window.innerWidth;
 		ctx.canvas.height = window.innerHeight;
-		redraw();
+		draw();
 	};
     </script>
 </head>
