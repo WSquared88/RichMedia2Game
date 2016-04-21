@@ -105,15 +105,16 @@ function shuffle(id)
 	var temp;
 	
 	//http://stackoverflow.com/questions/5533192/how-to-get-object-length
-	console.log(players[id].deck.keys(a).length);
+	console.log("Deck Size: " + Object.keys(players[id].deck).length);
 	
 	//The actual shuffle
 	for(var i = 0; i < repeats; i++)
-		for(var j = 0; j < players[id].deck.keys(a).length; j++) {
-			k = Math.floor(Math.random() * players[i].deck.keys(a).length);
-			temp = this.cards[j];
-			players[i].deck[j] = this.cards[k];
-			players[i].deck[k] = temp;
+		//for(var j = 0; j < players[id].deck.keys(a).length; j++) {
+		for(var j = 0; j < Object.keys(players[id].deck).length; j++) {
+			k = Math.floor(Math.random() * Object.keys(players[id].deck).length);
+			temp = players[id].deck[j];			
+			players[id].deck[j] = players[id].deck[k];
+			players[id].deck[k] = temp;
 	}
 	
 	console.log("Shuffled Deck: ");
