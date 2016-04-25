@@ -51,6 +51,7 @@
 		var sIsPressed = false;
 		var dIsPressed = false;
 		var myTurn = false;
+		var opponent = {};
 
         var player = {
             id: 0,
@@ -75,7 +76,9 @@
 			{
 				ctx.fillText("Your Turn", 10, 30);
 				ctx.fillText("Press W to pass the turn", 10, 50);
-			}else{
+			}
+			else if(!myTurn && opponent)
+			{
 				ctx.fillText("Opponent's Turn", 10, 30);
 			}
 			
@@ -166,6 +169,22 @@
 			{
 				console.log("Your turn has ended");
 				myTurn = false;
+			});
+			
+			socket.on("playerConnected", function(opp)
+			{
+				console.log("An opponent connected to your room");
+				console.log("Player Stats:");
+				console.log("Num cards in hand: " + opp.numCards);
+				console.log("Num cards in deck: " + opp.numDeck);
+				console.log("Graveyard: " + opp.grave);
+				opponent = opp;
+			});
+			
+			socket.on("playerDisconnected", function()
+			{
+				console.log("Your opponent has disconnected");
+				opponent = {};
 			});
 			
 			socket.on("exception", function(message)

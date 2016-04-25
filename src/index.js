@@ -6,7 +6,7 @@ var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 app.listen(PORT);
 
 var board = {};
-var rooms = [];
+var rooms = {};
 var roomNum = 0;
 var players = {};
 
@@ -47,7 +47,7 @@ function checkCollision(id)
 }
 
 //Done, adds a player to a room with a max of 2 people per room
-function enterRoom(socket)
+function enterRoom(player)
 {
 	console.log("joining a room");
 	var key = Object.keys(rooms);
@@ -55,11 +55,38 @@ function enterRoom(socket)
 	for(var i = 0;i<key.length;i++)
 	{
 		console.log("looking into room "+rooms[key[i]]);
-		if(io.sockets.adapter.rooms[rooms[key[i]]].length < 2)
+		if(rooms[key[i]].players.length < 2)
 		{
 			console.log("joining existing room " +rooms[key[i]]);
-			socket.join(rooms[key[i]]);
-			socket.room = rooms[key[i]];
+			
+			player.socket.join(rooms[key[i]].name);
+			player.socket.room = rooms[key[i]].name;
+			rooms[key[i]].players[player.id] = player;
+			
+			var opponent = findOpponent(player, player.socket);
+			
+			if(opponent)
+			{
+				var playerStats = 
+				{
+					numCards: Object.keys(player.cardsInHand).length,
+					numDeck: Object.keys(player.deck).length,
+					grave: player.grave
+				};
+				
+				var opponentStats = 
+				{
+					numCards: Object.keys(opponent.cardsInHand).length,
+					numDeck: Object.keys(opponent.deck).length,
+					grave: opponent.grave
+				};
+				
+				opponent.socket.emit("playerConnected", playerStats);
+				player.socket.emit("playerConnected", opponentStats);
+				console.log();
+				//console.log("current players ");
+				//console.dir(rooms[key[i]].players);
+			}
 			return;
 		}
 		console.log("finished looking into room "+rooms[key[i]]);
@@ -69,11 +96,23 @@ function enterRoom(socket)
 	//http://stackoverflow.com/questions/19156636/node-js-and-socket-io-creating-room
 	
 	var roomName = "room"+roomNum;
-	socket.join(roomName);
-	rooms.push(roomName);
-	socket.room = roomName;
+	
+	player.socket.join(roomName);
+	player.socket.room = roomName;
+	players[player.id] = player;
+	
+	var room = 
+	{
+		name: roomName,
+		players: []
+	};
+	
+	rooms[roomName] = room;
+	rooms[roomName].players[player.id] = player;
+	
 	roomNum++;
 	console.log("joined "+roomName);
+	//console.dir(rooms);
 }
 
 //make the players deck and randomize the deck order
@@ -89,7 +128,7 @@ function generateDeck(id)
 		};
 	}
 	console.log("New Deck: ");
-	console.log(players[id].deck);
+	//console.log(players[id].deck);
 	//randomize deck
 	shuffle(id);
 }
@@ -118,16 +157,21 @@ function shuffle(id)
 	}
 	
 	console.log("Shuffled Deck: ");
-	console.log(players[id].deck);
+	//console.log(players[id].deck);
 }
 
+function updatePlayer(player)
+{
+	players[player.id] = player;
+	rooms[player.socket.room].players[player.id] = player;
+}
 
 //When the player draws a card put the first card from the deck into the hand and then remove that from the deck
 function drawCard(player)
 {
 	player.cardsInHand.push(player.deck[0]);
 	player.deck.splice(0,1);
-	players[player.id] = player;
+	updatePlayer(player);
 }
 
 //When a player plays a card remove it from their hand, put it on the board(not in yet), and activate the effect
@@ -135,7 +179,7 @@ function useCard(player, card)
 {
 	console.log("activating card effect");
 	player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
-	players[player.id] = player;
+	updatePlayer(player);
 }
 
 //If the player has an opponent then it returns them, otherwise it returns nothing.
@@ -143,29 +187,33 @@ function findOpponent(currPlayer, socket)
 {
 	console.log("socket room " +socket.room);
 	var room = io.sockets.adapter.rooms[socket.room];
-	console.log("opponent room "+room);
+	console.log("opponent room ");
+	//console.dir(rooms[socket.room].players);
+	var key = Object.keys(rooms[socket.room].players);
+	console.log("got the key");
 	
-	for(var playerID in io.sockets.adapter.rooms[socket.room].sockets)
+	for(var i = 0;i<key.length;i++)
 	{
-		if(playerID && playerID != currPlayer.id)
+		if(rooms[socket.room].players[key[i]] && rooms[socket.room].players[key[i]].id != currPlayer.id)
 		{
-			console.log("curr player id " + currPlayer.id + " player id " + playerID);
-			return players[playerID];
+			console.log("curr player id " + currPlayer.id + " player id " + rooms[socket.room].players[key[i]].id);
+			return rooms[socket.room].players[key[i]];
 		}
 	}
+	
+	console.log("No opponent found");
 }
 
 io.on("connection", function(socket)
 {
 	socket.on("init", function(data)
 	{
-		enterRoom(socket);
-		
 		console.log("Socket ID " + socket.id);
 		
 		players[socket.id] = 
 		{
-			player: data.data,
+			time: data.data.time,
+			socket: socket,
 			id: socket.id,
 			cardsInHand: {},
 			deck: {},
@@ -174,12 +222,7 @@ io.on("connection", function(socket)
 		};
 		generateDeck(socket.id);
 		
-		var message = 
-		{
-			message: "",
-			data: players[socket.id],
-			id: socket.id
-		};
+		enterRoom(players[socket.id]);
 		
 		console.log("looking for opponent "+socket);
 		var opponent = findOpponent(players[socket.id], socket);
@@ -189,17 +232,23 @@ io.on("connection", function(socket)
 			if(Math.random()*2 < 1)
 			{
 				opponent.isActivePlayer = true;
-				players[opponent.id] = opponent;
-				io.sockets.connected[opponent.id].emit("startTurn");
+				updatePlayer(opponent);
+				opponent.socket.emit("startTurn");
 			}
 			else
 			{
 				players[socket.id].isActivePlayer = true;
-				io.sockets.connected[socket.id].emit("startTurn");
+				updatePlayer(players[socket.id]);
+				socket.emit("startTurn");
 			}
 		}
 		
-		io.sockets.connected[socket.id].emit("connected", message);
+		var message = 
+		{
+			id: socket.id
+		};
+		
+		socket.emit("connected", message);
 	});
 	
 	socket.on("nextTurn", function(player)
@@ -217,27 +266,49 @@ io.on("connection", function(socket)
 			{
 				players[player.id].isActivePlayer = false;
 				players[opponent.id].isActivePlayer = true;
-				io.sockets.connected[opponent.id].emit("startTurn");
-				io.sockets.connected[player.id].emit("endTurn");
+				
+				updatePlayer(players[player.id]);
+				updatePlayer(players[opponent.id]);
+				
+				players[opponent.id].socket.emit("startTurn");
+				players[player.id].socket.emit("endTurn");
 				return;
 			}
+			
 			message.data = "You do not have an opponent.";
-			io.sockets.connected[player.id].emit("exception", message);
+			players[player.id].socket.emit("exception", message);
 			return;
 		}
 		
 		message.data = "You are not the active turn player, you cannot end your turn.";
-		io.sockets.connected[socket.id].emit("exception", message);
+		players[socket.id].socket.emit("exception", message);
 	});
 	
 	socket.on("disconnect", function(data)
 	{
 		console.log("data " + data);
+		console.log("disconnecting socket room " + socket.room + " socket id " + socket.id);
+		
+		var opponent = findOpponent(players[socket.id], socket);
+		if(opponent)
+		{
+			console.log("telling opponent to disconnect");
+			//console.dir(io.sockets.connected);
+			opponent.socket.emit("playerDisconnected");
+		}
+		
 		socket.leave(socket.room);
 		
-		if(!io.sockets.adapter.rooms[socket.room])
+		delete rooms[socket.room].players[socket.id];
+		delete players[socket.id];
+		
+		console.log("\nPlayers in room on disconnect " + Object.keys(rooms[socket.room].players).length);
+		console.dir(rooms[socket.room].players);
+		console.log(socket.room);
+		
+		if(Object.keys(rooms[socket.room].players).length <= 0)
 		{
-			rooms.splice(rooms.indexOf(socket.room), 1);
+			delete rooms[socket.room];
 			console.log("deleting " + socket.room);
 			console.log("rooms " + rooms);
 		}
