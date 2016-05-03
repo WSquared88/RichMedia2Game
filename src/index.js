@@ -84,6 +84,19 @@ function enterRoom(player)
 				opponent.socket.emit("playerConnected", playerStats);
 				player.socket.emit("playerConnected", opponentStats);
 				console.log();
+				
+				for(var i = 0;i<3;i++)
+				{
+					drawCard(player);
+				}
+				
+				if(opponent.cardsInHand.length == 0)
+				{
+					for(var i = 0;i<3;i++)
+					{
+						drawCard(opponent);
+					}
+				}
 				//console.log("current players ");
 				//console.dir(rooms[key[i]].players);
 			}
