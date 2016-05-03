@@ -42,7 +42,7 @@
         var canvas;
         var ctx;
         var socket;
-		var cardsInHand = {};
+		var cardsInHand = [];
 		var numCardsInOpponentsHand = 0;
 		var points = 0;
 		var animationID;
@@ -71,17 +71,25 @@
 			//ctx.closePath();
 			
 			ctx.fillStyle = "black";
+			ctx.textAlign = "center";
 			ctx.font = "20px Arial";
-			if(myTurn)
+			if(Object.keys(opponent).length === 0 && JSON.stringify(opponent) === JSON.stringify({}))
 			{
-				ctx.fillText("Your Turn", 10, 30);
-				ctx.fillText("Press W to pass the turn", 10, 50);
+				ctx.fillText("Waiting for an Opponent to connect", ctx.canvas.width/2, ctx.canvas.height/3);
 			}
-			else if(!myTurn && opponent)
+			else if(myTurn)
 			{
-				ctx.fillText("Opponent's Turn", 10, 30);
+				ctx.fillText("Your Turn", ctx.canvas.width/2, ctx.canvas.height/3-15);
+				ctx.fillText("Press W to pass the turn", ctx.canvas.width/2, ctx.canvas.height/3+15);
+			}
+			else if(!myTurn)
+			{
+				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/3);
 			}
 			
+			ctx.textAlign = "left";
+			ctx.fillText("Cards: "+Object.keys(cardsInHand).length, 10, 30);
+			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
 		}
 		
 		function update()
@@ -171,6 +179,17 @@
 				myTurn = false;
 			});
 			
+			socket.on("updateCards", function(data)
+			{
+				cardsInHand = data.player;
+				numCardsInOpponentsHand = data.opp;
+				console.log("Updating what the cards look like"+cardsInHand.length);
+				for(var i = 0;i<cardsInHand.length;i++)
+				{
+					console.log("Card Name: "+cardsInHand[i].name);
+				}
+			});
+			
 			socket.on("playerConnected", function(opp)
 			{
 				console.log("An opponent connected to your room");
@@ -244,6 +263,11 @@
 					dIsPressed = false;
 				}
 			};
+			
+			document.onmousedown = function(e)
+			{
+				//socket.emit("
+			}
 			
 			requestAnimationFrame(update);
         }

@@ -169,9 +169,34 @@ function updatePlayer(player)
 //When the player draws a card put the first card from the deck into the hand and then remove that from the deck
 function drawCard(player)
 {
-	player.cardsInHand.push(player.deck[0]);
-	player.deck.splice(0,1);
+	console.log("Drawing a card");
+	var key = Object.keys(player.deck);
+	
+	for(var i = 0;i<key.length;i++)
+	{
+		if(player.deck[i])
+		{
+			console.log("Card Name: " + player.deck[i].name);
+			player.cardsInHand.push(player.deck[i]);
+			//player.deck.splice(0,1);
+			delete player.deck[i];
+			break;
+		}
+	}
 	updatePlayer(player);
+	
+	var opp = findOpponent(player, player.socket);
+	player.socket.emit("updateCards", 
+	{
+		player: player.cardsInHand,
+		opp: Object.keys(opp.cardsInHand).length
+	});
+	
+	opp.socket.emit("updateCards", 
+	{
+		player: opp.cardsInHand,
+		opp: Object.keys(player.cardsInHand).length
+	});
 }
 
 //When a player plays a card remove it from their hand, put it on the board(not in yet), and activate the effect
@@ -215,7 +240,7 @@ io.on("connection", function(socket)
 			time: data.data.time,
 			socket: socket,
 			id: socket.id,
-			cardsInHand: {},
+			cardsInHand: [],
 			deck: {},
 			grave: {},
 			isActivePlayer: false
@@ -234,6 +259,7 @@ io.on("connection", function(socket)
 				opponent.isActivePlayer = true;
 				updatePlayer(opponent);
 				opponent.socket.emit("startTurn");
+				opponent.socket.emit
 			}
 			else
 			{
@@ -272,6 +298,7 @@ io.on("connection", function(socket)
 				
 				players[opponent.id].socket.emit("startTurn");
 				players[player.id].socket.emit("endTurn");
+				drawCard(players[opponent.id]);
 				return;
 			}
 			
