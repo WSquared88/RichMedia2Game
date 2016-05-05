@@ -198,12 +198,12 @@ function drawCard(player)
 	for(var i = 0;i<key.length;i++)
 	{
 		console.log("Looping to draw a card " + i);
-		if(player.deck[i])
+		if(!(JSON.stringify(player.deck[i]) === JSON.stringify({})))
 		{
 			console.log("Card Name: " + player.deck[i].name);
 			player.cardsInHand.push(player.deck[i]);
 			//player.deck.splice(0,1);
-			delete player.deck[i];
+			player.deck[i] = {};
 			break;
 		}
 	}

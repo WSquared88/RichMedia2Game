@@ -209,7 +209,7 @@
 				console.log("Updating what the cards look like"+cardsInHand.length);
 				for(var i = 0;i<cardsInHand.length;i++)
 				{
-					cardsInHand[i].posX = ((((ctx.canvas.width-cardsInHand[0].width*1.5)/cardsInHand.length) )*i)+cardsInHand[0].width/2;//(i*(cardsInHand[i].width+50)) + ((i+1)*5);
+					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2) - (cardsInHand[0].width/2);
 					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height) - 50;
 					console.log("Card Name: "+cardsInHand[i].name);
 				}
