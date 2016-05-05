@@ -144,7 +144,7 @@ function generateDeck(id)
 			name: "Def.No." + i,
 			cost: Math.floor(Math.random() * 6),
 			width: 150,
-			height: 300,
+			height: 200,
 			posX: 0,
 			posY: 0
 		};
