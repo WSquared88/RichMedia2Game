@@ -1,6 +1,8 @@
 var app = require("http").createServer(handler);
 var io = require("socket.io")(app);
 var fs = require("fs");
+var path = require("path");
+var express = require("express");
 var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 
 app.listen(PORT);
@@ -9,6 +11,9 @@ var board = {};
 var rooms = {};
 var roomNum = 0;
 var players = {};
+
+var exp = express();
+exp.use("/assets", express.static(path.resolve(__dirname + "/../client")));
 
 function handler(req, res)
 {
