@@ -193,9 +193,11 @@ function drawCard(player)
 {
 	console.log("Drawing a card");
 	var key = Object.keys(player.deck);
+	console.log("Num cards in deck " + key.length);
 	
 	for(var i = 0;i<key.length;i++)
 	{
+		console.log("Looping to draw a card " + i);
 		if(player.deck[i])
 		{
 			console.log("Card Name: " + player.deck[i].name);
@@ -227,6 +229,19 @@ function useCard(player, card)
 	console.log("activating card effect");
 	player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
 	updatePlayer(player);
+	
+	var opp = findOpponent(player, player.socket);
+	player.socket.emit("updateCards", 
+	{
+		player: player.cardsInHand,
+		opp: Object.keys(opp.cardsInHand).length
+	});
+	
+	opp.socket.emit("updateCards", 
+	{
+		player: opp.cardsInHand,
+		opp: Object.keys(player.cardsInHand).length
+	});
 }
 
 //If the player has an opponent then it returns them, otherwise it returns nothing.
@@ -297,6 +312,12 @@ io.on("connection", function(socket)
 		};
 		
 		socket.emit("connected", message);
+	});
+	
+	socket.on("useCard", function(card)
+	{
+		console.log("start to use a card");
+		useCard(players[socket.id], card);
 	});
 	
 	socket.on("nextTurn", function(player)

@@ -87,7 +87,7 @@
 				ctx.textAlign = "center";
 				ctx.fillStyle = "black";
 				ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
-				console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
+				//console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
 			}
 			
 			ctx.fillStyle = "black";
@@ -110,6 +110,7 @@
 			ctx.textAlign = "left";
 			ctx.fillText("Cards: "+Object.keys(cardsInHand).length, 10, 30);
 			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
+			ctx.fillText("Left click to use a card!", 10, 90);
 		}
 		
 		function update()
@@ -292,6 +293,7 @@
 			{
 				console.log(e.clientX);//if(
 				console.log(e.clientY);
+				socket.emit("useCard", cardsInHand[0]);
 			}
 			
 			requestAnimationFrame(update);
