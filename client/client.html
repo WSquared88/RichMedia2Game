@@ -69,6 +69,19 @@
 			//ctx.arc(200, 200, 100, 0, 2*Math.PI);
 			//ctx.fill();
 			//ctx.closePath();
+			console.log("Starting card draw");
+			
+			for(var i = 0;i<cardsInHand.length;i++)
+			{
+				ctx.fillStyle = "black";
+				ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
+				ctx.fillStyle = "CornFlowerBlue";
+				ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
+				ctx.textAlign = "center";
+				ctx.fillStyle = "black";
+				ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
+				console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
+			}
 			
 			ctx.fillStyle = "black";
 			ctx.textAlign = "center";
@@ -186,6 +199,8 @@
 				console.log("Updating what the cards look like"+cardsInHand.length);
 				for(var i = 0;i<cardsInHand.length;i++)
 				{
+					cardsInHand[i].posX = ((((ctx.canvas.width-cardsInHand[0].width*1.5)/cardsInHand.length) )*i)+cardsInHand[0].width/2;//(i*(cardsInHand[i].width+50)) + ((i+1)*5);
+					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height) - 50;
 					console.log("Card Name: "+cardsInHand[i].name);
 				}
 			});
@@ -266,7 +281,8 @@
 			
 			document.onmousedown = function(e)
 			{
-				//socket.emit("
+				console.log(e.clientX);//if(
+				console.log(e.clientY);
 			}
 			
 			requestAnimationFrame(update);
@@ -277,6 +293,7 @@
 	{
 		ctx.canvas.width = window.innerWidth;
 		ctx.canvas.height = window.innerHeight;
+		console.log(window.innerHeight);
 		draw();
 	};
     </script>

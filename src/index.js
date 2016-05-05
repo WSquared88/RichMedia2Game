@@ -137,7 +137,11 @@ function generateDeck(id)
 		players[id].deck[i] = 
 		{
 			name: "Def.No." + i,
-			cost: Math.floor(Math.random() * 6)
+			cost: Math.floor(Math.random() * 6),
+			width: 150,
+			height: 300,
+			posX: 0,
+			posY: 0
 		};
 	}
 	console.log("New Deck: ");
