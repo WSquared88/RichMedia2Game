@@ -55,6 +55,30 @@
 		
 		var bk = new Image();
 		var bkLoaded = false;
+		
+		//default size, reset later based on screen res
+		var fontSize = "20px";
+		var fontType = "Arial";
+		
+		var grid = [,];
+		var gridStats = {
+			//pixel position
+			x:0,
+			y:0,
+			//pixel dimensions
+			width: 0,
+			height: 0,
+			spaceWidth: 0,
+			spaceHeight: 0
+		};
+		//init 2d array
+		for(var x = 0; x < 7; x++)
+			{
+				for(var y = 0; y < 5; y++)
+				{
+					grid[x,y] = {};
+				}
+			}
 
         var player = {
             id: 0,
@@ -63,8 +87,34 @@
 			points: 0
         };
 		
+		function updateScreenSizes()
+		{
+			//reposition cards in hand
+			for(var i = 0;i<cardsInHand.length;i++)
+				{
+					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
+					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
+					console.log("Card Name: "+cardsInHand[i].name);
+				}
+			//reposition board
+			gridStats.x = canvas.width*1/4;
+			gridStats.y = ctx.canvas.height*9/64;
+			gridStats.width = ctx.canvas.width/2;
+			gridStats.height = ctx.canvas.height*9/20;
+			gridStats.spaceWidth = gridStats.width/7;
+			gridStats.spaceHeight = gridStats.height/5;
+			
+			var ratio = 11.5 / 1000.0;
+			//console.log("ratio: " + ratio);
+			fontSize = canvas.width * ratio;
+			//console.log("Font Size " + fontSize);
+			ctx.font = fontSize + "px " + fontType;
+			//console.log(ctx.font);
+		}
+		
 		function draw()
 		{
+			//ctx.font = fontSize + " " + fontType;
 			ctx.fillStyle = "rgba(100, 150, 200, 1)";
 			ctx.clearRect(0,0,canvas.width, canvas.height);
 			
@@ -73,7 +123,7 @@
 				ctx.drawImage(bk,0,0, canvas.width, canvas.height);
 			}
 			
-			
+			//menu
 			ctx.strokeStyle = "black";
 			ctx.fillStyle = "CornFlowerBlue";
 			ctx.lineWidth = 5;
@@ -87,10 +137,24 @@
 			ctx.strokeRect(0,tempY,canvas.width-3,canvas.height/5);
 			ctx.fillRect(0,tempY,canvas.width-3,canvas.height/5);
 			
+			//board
+			ctx.strokeStyle = "black";
+			ctx.fillStyle = "#93CCEA";
+			ctx.lineWidth = 5;
+			ctx.strokeRect(gridStats.x,gridStats.y,gridStats.width,gridStats.height);
+			ctx.fillRect(gridStats.x,gridStats.y,gridStats.width,gridStats.height);
+			//board's gridStats
 			
+			ctx.lineWidth = 1;
+			for(var x = 0; x < 7/*gridStats.width*/; x++)
+			{
+				for(var y = 0; y < 5/*gridStats.height*/; y++)
+				{
+					ctx.strokeRect(gridStats.x + gridStats.spaceWidth * x,gridStats.y + gridStats.spaceHeight * y,gridStats.spaceWidth,gridStats.spaceHeight);
+				}
+			}
 			
-			console.log("Starting card draw");
-			
+			//cards
 			for(var i = 0;i<cardsInHand.length;i++)
 			{
 				ctx.fillStyle = "black";
@@ -105,7 +169,6 @@
 			
 			ctx.fillStyle = "black";
 			ctx.textAlign = "center";
-			ctx.font = "20px Arial";
 			if(Object.keys(opponent).length === 0 && JSON.stringify(opponent) === JSON.stringify({}))
 			{
 				ctx.fillText("Waiting for an Opponent to connect", ctx.canvas.width/2, ctx.canvas.height/3);
@@ -115,26 +178,31 @@
 				ctx.strokeStyle = "black";
 				ctx.fillStyle = "#93CCEA";
 				ctx.lineWidth = 5;
-				ctx.strokeRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
-				ctx.fillRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				ctx.strokeRect(canvas.width*5/12,ctx.canvas.height*3/50,canvas.width/6,canvas.height/21);
+				ctx.fillRect(canvas.width*5/12,ctx.canvas.height*3/50,canvas.width/6,canvas.height/21);
 				
 				ctx.fillStyle = "black";
-				ctx.fillText("Your Turn", ctx.canvas.width/2, ctx.canvas.height/10 - 10);
-				ctx.fillText("Press W to pass the turn", ctx.canvas.width/2, ctx.canvas.height/10 + 15);
+				ctx.fillText("Your Turn", ctx.canvas.width/2, ctx.canvas.height*4/50);
+				ctx.fillText("Press W to pass the turn", ctx.canvas.width/2, ctx.canvas.height*5/50);
 			}
 			else if(!myTurn)
 			{
 				ctx.strokeStyle = "black";
 				ctx.fillStyle = "#93CCEA";
 				ctx.lineWidth = 5;
-				ctx.strokeRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
-				ctx.fillRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				ctx.strokeRect(canvas.width*5/12,ctx.canvas.height*3/50,canvas.width/6,canvas.height/21);
+				ctx.fillRect(canvas.width*5/12,ctx.canvas.height*3/50,canvas.width/6,canvas.height/21);
 				
 				ctx.fillStyle = "black";
-				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/10);
+				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/11);
 				//ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/3);
 			}
 			
+			
+			
+			
+			//Game info
+			ctx.fillStyle = "black";
 			ctx.textAlign = "left";
 			ctx.fillText("Cards: "+Object.keys(cardsInHand).length, 10, 30);
 			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
@@ -195,9 +263,16 @@
 			ctx.canvas.width = window.innerWidth;
 			ctx.canvas.height = window.innerHeight;
 			
-			ctx.font = "20px Arial";
+			gridStats.x = canvas.width*1/4;
+			gridStats.y = ctx.canvas.height*9/64;
+			gridStats.width = ctx.canvas.width/2;
+			gridStats.height = ctx.canvas.height*9/20;
+			gridStats.spaceWidth = gridStats.width/7;
+			gridStats.spaceHeight = gridStats.height/5;
 			
 			loadAssets();
+			
+			updateScreenSizes();
 			
 			socket = io.connect();
 			socket.on("connect", function()
@@ -234,13 +309,7 @@
 			{
 				cardsInHand = data.player;
 				numCardsInOpponentsHand = data.opp;
-				console.log("Updating what the cards look like"+cardsInHand.length);
-				for(var i = 0;i<cardsInHand.length;i++)
-				{
-					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
-					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
-					console.log("Card Name: "+cardsInHand[i].name);
-				}
+				updateScreenSizes();
 			});
 			
 			socket.on("playerConnected", function(opp)
@@ -344,7 +413,9 @@
 	{
 		ctx.canvas.width = window.innerWidth;
 		ctx.canvas.height = window.innerHeight;
-		console.log(window.innerHeight);
+		
+		updateScreenSizes();
+		
 		draw();
 	};
     </script>
