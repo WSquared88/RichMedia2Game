@@ -72,17 +72,30 @@
 			{
 				ctx.drawImage(bk,0,0, canvas.width, canvas.height);
 			}
-			//ctx.beginPath();
-			//ctx.arc(200, 200, 100, 0, 2*Math.PI);
-			//ctx.fill();
-			//ctx.closePath();
+			
+			
+			ctx.strokeStyle = "black";
+			ctx.fillStyle = "CornFlowerBlue";
+			ctx.lineWidth = 5;
+			
+			//top
+			ctx.strokeRect(0,0,canvas.width-3,canvas.height/8);
+			ctx.fillRect(0,0,canvas.width-3,canvas.height/8);
+			
+			var tempY = canvas.height *3/5;//ctx.canvas.height - (40*2) + 40/4;
+			//bottom
+			ctx.strokeRect(0,tempY,canvas.width-3,canvas.height/5);
+			ctx.fillRect(0,tempY,canvas.width-3,canvas.height/5);
+			
+			
+			
 			console.log("Starting card draw");
 			
 			for(var i = 0;i<cardsInHand.length;i++)
 			{
 				ctx.fillStyle = "black";
 				ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
-				ctx.fillStyle = "CornFlowerBlue";
+				ctx.fillStyle = "#93CCEA";
 				ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
 				ctx.textAlign = "center";
 				ctx.fillStyle = "black";
@@ -99,12 +112,27 @@
 			}
 			else if(myTurn)
 			{
-				ctx.fillText("Your Turn", ctx.canvas.width/2, ctx.canvas.height/3-15);
-				ctx.fillText("Press W to pass the turn", ctx.canvas.width/2, ctx.canvas.height/3+15);
+				ctx.strokeStyle = "black";
+				ctx.fillStyle = "#93CCEA";
+				ctx.lineWidth = 5;
+				ctx.strokeRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				ctx.fillRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				
+				ctx.fillStyle = "black";
+				ctx.fillText("Your Turn", ctx.canvas.width/2, ctx.canvas.height/10 - 10);
+				ctx.fillText("Press W to pass the turn", ctx.canvas.width/2, ctx.canvas.height/10 + 15);
 			}
 			else if(!myTurn)
 			{
-				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/3);
+				ctx.strokeStyle = "black";
+				ctx.fillStyle = "#93CCEA";
+				ctx.lineWidth = 5;
+				ctx.strokeRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				ctx.fillRect(canvas.width/2 - 120,ctx.canvas.height/10 - 30,240,50);
+				
+				ctx.fillStyle = "black";
+				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/10);
+				//ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/3);
 			}
 			
 			ctx.textAlign = "left";
@@ -209,7 +237,7 @@
 				console.log("Updating what the cards look like"+cardsInHand.length);
 				for(var i = 0;i<cardsInHand.length;i++)
 				{
-					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2) - (cardsInHand[0].width/2);
+					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
 					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
 					console.log("Card Name: "+cardsInHand[i].name);
 				}
