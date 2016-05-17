@@ -1,6 +1,7 @@
 var app = require("http").createServer(handler);
 var io = require("socket.io")(app);
 var fs = require("fs");
+var favicon = require("serve-favicon");
 var path = require("path");
 var express = require("express");
 var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -52,7 +53,7 @@ exp.use(session(
 		httpOnly: true
 	}
 }));
-
+exp.use(favicon(__dirname + "/../client/favicon.png"));
 exp.disable("x-powered-by");
 exp.use(csrf());
 exp.use(function(err, req, res, next)
