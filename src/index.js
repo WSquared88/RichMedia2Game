@@ -328,7 +328,7 @@ io.on("connection", function(socket)
 	socket.on("useCard", function(data)
 	{
 		console.log("start to use a card");
-		useCard(players[socket.id], data.card, data.x, data.y);
+		useCard(players[socket.id], data.card);
 	});
 	
 	socket.on("nextTurn", function(player)

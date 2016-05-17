@@ -206,14 +206,13 @@
 			for(var i = cardsInHand.length-1;i>=0;i--)
 			{
 				var card = cardsInHand[i];
-				var cardIndex = -1;
 				
 				if(mouse.x > card.posX && mouse.y > card.posY && mouse.x < card.posX + card.width && mouse.y < card.posY + card.height)
 				{
 					return i;
 				}
 			}
-			return cardIndex;
+			return -1;
 		}
 		
 		function sendPos()
@@ -390,7 +389,7 @@
 				{
 					card: cardsInHand[0],
 				}
-				socket.emit("useCard", messageS);
+				socket.emit("useCard", message);
 			}
 			
 			requestAnimationFrame(update);
