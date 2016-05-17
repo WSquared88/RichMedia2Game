@@ -1,0 +1,58 @@
+{
+"cards" : {
+	{
+		name: "Soldier",
+		cost: 2,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	},
+	{
+		name: "Druid",
+		cost: 1,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	},
+	{
+		name: "Knight",
+		cost: 5,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	},
+	{
+		name: "Berserker",
+		cost: 2,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	},
+	{
+		name: "Archer",
+		cost: 3,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	},
+	{
+		name: "Spearman",
+		cost: 4,
+		width: 150,
+		height: 200,
+		posX: 0,
+		posY: 0,
+		hovering: false
+	}
+}
+}

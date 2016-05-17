@@ -4,6 +4,12 @@ var fs = require("fs");
 var path = require("path");
 var express = require("express");
 var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
+//for db
+var mongoose = require("mongoose");
+var session = require("express-session");
+var RedisStore = require("connect-redis")(session);
+var url = require("url");
+var csrf = require("csurf");
 
 app.listen(PORT);
 
@@ -14,6 +20,19 @@ var players = {};
 
 var exp = express();
 exp.use("/assets", express.static(path.resolve(__dirname + "/../client")));
+
+//for db
+var dbURL = process.env.MONGOLAB_URI || "mongodb://localhost/Cards";
+
+var db = mongoose.connect(dbURL, function(err)
+{
+	if(err)
+	{
+		console.log("Could not connect to database");
+		throw err;
+	}
+});
+
 
 function handler(req, res)
 {
@@ -114,9 +133,6 @@ function enterRoom(player)
 		console.log("finished looking into room "+rooms[key[i]]);
 	}
 	
-	//Look at this later
-	//http://stackoverflow.com/questions/19156636/node-js-and-socket-io-creating-room
-	
 	var roomName = "room"+roomNum;
 	
 	player.socket.join(roomName);
@@ -161,6 +177,7 @@ function generateDeck(id)
 			posY: 0,
 			hovering: false
 		};
+		//TODO ^ should be a card from the database
 	}
 	console.log("New Deck: ");
 	//console.log(players[id].deck);
