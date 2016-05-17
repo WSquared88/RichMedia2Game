@@ -45,6 +45,8 @@
 		var cardsInHand = [];
 		var field = [];
 		var numCardsInOpponentsHand = 0;
+		var numCardsInOpponentsDeck = 0;
+		var numCardsInDeck = 0;
 		var points = 0;
 		var animationID;
 		var wIsPressed = false;
@@ -235,10 +237,13 @@
 			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
 			ctx.fillText("Left click to use a card!", 10, 90);
 			
+			ctx.textAlign = "right";
+			ctx.fillText("Number of cards in your deck: "+numCardsInDeck, ctx.canvas.width - 10, 30);
+			ctx.fillText("Number of cards in your opponent's deck: "+ numCardsInOpponentsDeck, ctx.canvas.width - 10, 60);
+			
 			if(cardIndex != -1)
 			{
-				ctx.textAlign = "right";
-				ctx.fillText("Right click to let go of your card", ctx.canvas.width - 10, 60);
+				ctx.fillText("Right click to let go of your card", ctx.canvas.width - 10, 90);
 			}
 			
 			//cards
@@ -452,6 +457,8 @@
 			{
 				cardsInHand = data.player;
 				numCardsInOpponentsHand = data.opp;
+				numCardsInDeck = data.deck;
+				numCardsInOpponentsDeck = data.oppDeck;
 				updateScreenSizes();
 			});
 			

@@ -195,6 +195,24 @@ function shuffle(id)
 	//console.log(players[id].deck);
 }
 
+function getNumCardsInDeck(deck)
+{
+	var key = Object.keys(deck);
+	var numCards = 0;
+	console.log("Num cards in deck " + key.length);
+	
+	for(var i = 0;i<key.length;i++)
+	{
+		console.log("Looping to draw a card " + i);
+		if(!(JSON.stringify(deck[i]) === JSON.stringify({})))
+		{
+			console.log("Card Name: " + deck[i].name);
+			numCards++;
+		}
+	}
+	return numCards;
+}
+
 function updatePlayer(player)
 {
 	players[player.id] = player;
@@ -226,13 +244,17 @@ function drawCard(player)
 	player.socket.emit("updateCards", 
 	{
 		player: player.cardsInHand,
-		opp: Object.keys(opp.cardsInHand).length
+		opp: Object.keys(opp.cardsInHand).length,
+		deck: getNumCardsInDeck(player.deck),
+		oppDeck: getNumCardsInDeck(opp.deck)
 	});
 	
 	opp.socket.emit("updateCards", 
 	{
 		player: opp.cardsInHand,
-		opp: Object.keys(player.cardsInHand).length
+		opp: Object.keys(player.cardsInHand).length,
+		deck: getNumCardsInDeck(opp.deck),
+		oppDeck: getNumCardsInDeck(player.deck)
 	});
 }
 
@@ -256,7 +278,9 @@ function useCard(player, card, x, y)
 			player.socket.emit("updateCards", 
 			{
 				player: player.cardsInHand,
-				opp: Object.keys(opp.cardsInHand).length
+				opp: Object.keys(opp.cardsInHand).length,
+				deck: getNumCardsInDeck(player.deck),
+				oppDeck: getNumCardsInDeck(opp.deck)
 			});
 			
 			player.socket.emit("updateBoard",
@@ -269,7 +293,9 @@ function useCard(player, card, x, y)
 			opp.socket.emit("updateCards", 
 			{
 				player: opp.cardsInHand,
-				opp: Object.keys(player.cardsInHand).length
+				opp: Object.keys(player.cardsInHand).length,
+				deck: getNumCardsInDeck(opp.deck),
+				oppDeck: getNumCardsInDeck(player.deck)
 			});
 			
 			opp.socket.emit("updateBoard",
