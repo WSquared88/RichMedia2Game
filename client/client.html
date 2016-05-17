@@ -89,7 +89,7 @@
 			{
 				for(var y = 0; y < 5; y++)
 				{
-					grid[x,y] = {};
+					gridStats[x,y] = {};
 				}
 			}
 		
@@ -216,10 +216,6 @@
 				ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/11);
 				//ctx.fillText("Opponent's Turn", ctx.canvas.width/2, ctx.canvas.height/3);
 			}
-			
-			
-			
-			
 			//Game info
 			ctx.fillStyle = "black";
 			ctx.textAlign = "left";
@@ -272,6 +268,35 @@
 			{
 				cardsInHand[index].hovering = true;
 			}
+			
+			//if we're in the gridStats
+			if(mouse.x>gridStats.x &&
+				mouse.x<(gridStats.x + gridStats.width) &&
+				mouse.y>gridStats.y &&
+				mouse.y<(gridStats.y + gridStats.height))
+			{
+				for(var x = 0; x < (7); x++)
+				{
+					for(var y = 0; y < (5); y++)
+					{
+						//If we're in this specific space,
+						if((mouse.x>gridStats.x + gridStats.spaceWidth * x) &&
+							mouse.x<gridStats.x + gridStats.spaceWidth * (x + 1) &&
+							mouse.y>gridStats.y + gridStats.spaceHeight * y &&
+							mouse.y<gridStats.y + gridStats.spaceHeight * (y + 1))
+						{
+							//stuff
+							//console.log(index);
+							//console.log("We're in (" + x + "," + y + ")");
+							//console.log(cardsInHand[index]);
+							//grid[x,y] = cardsInHand[index];
+							console.log(grid[x,y]);
+						}
+					}
+				}
+			}
+			//cardsInHand[index]
+			
 			draw();
 		}
 		
@@ -317,8 +342,6 @@
 					x: e.clientX - rect.left,
 					y: e.clientY - rect.top
 				};
-				
-				console.log("Moving the mouse");
 			}, false);
 			
 			ctx.canvas.width = window.innerWidth;
