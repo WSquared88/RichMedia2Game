@@ -533,6 +533,11 @@
 			
 			document.onmousedown = function(e)
 			{
+				if(!myTurn)
+				{
+					return;
+				}
+				
 				console.log(e.clientX);//if(
 				console.log(e.clientY);
 				
