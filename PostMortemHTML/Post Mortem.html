@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+	<style>
+	body{
+		background-color: #B0C0D0;
+		margin: 0;
+		padding: 5em;
+		font-size: 1em;
+		font-family: 'Open Sans', sans-serif;
+	}
+
+
+	h1{
+		font-family: 'Oswald', sans-serif;
+		font-size: 4.0em;
+	}
+
+	h2{
+		font-family: 'Oswald', sans-serif;
+		font-size: 2.0em;
+	}
+
+	p{
+		font-family: 'Open Sans', sans-serif;
+	}
+
+	</style>
+	</head>
+<body>
+	<h1 id = "title" >Springs of Albion</h1>
+	
+	<h2>Objective </h2>
+	<p> To recreate an analog board game that we’re working on in production studio in a web game, where players can matchup versus each other, play cards, and play until completion of the game.</p>
+	<h2>Technical </h2>
+	<p>
+	Our project uses Mongo, Node.js, and socket.io to support a server that provides a client for the game. On server side, rooms will take up to two clients since the game is two player. When more clients attempt to join, the server creates more rooms to hold them in rooms of two users. The server also generates a shuffled deck for each user, and when players begin their turn in game the server gives information about the card they drew to begin the turn.
+	</p>
+	<p>
+	The client displays the hand of the user, without having access to their deck to avoid cheating. When a player begins their turn, they draw a card, shown by the server to them alone. The opponent can see the number of cards in the opponent’s hand. The UI displays the cards in the user’s hand, the total number of cards in hand, the number of cards in the opponent’s hand, whose turn it is, and the 7x5 board. 
+	</p>
+	<h2> Gameplay</h2>
+	<p>
+	Players draw cards upon starting the turn, and can play cards from their hand. When done, they can end their turn and their opponent gets to take their turn. The full gameplay of our board game is not shown in our game. The full game rules are not implemented, but the core of card placement and card handling is functional.
+	</p>
+	<h2> Conclusion</h2>
+	<p>
+	We completed a game that fulfills the technical requirements of the project while needing some improvement in the full implementation of the board game it’s based on.
+	</p>
+</body>
+</html>
