@@ -235,22 +235,36 @@ function drawCard(player)
 //When a player plays a card remove it from their hand, put it on the board(not in yet), and activate the effect
 function useCard(player, card)
 {
-	console.log("activating card effect");
-	player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
-	updatePlayer(player);
+	console.log("activating card effect on card "+card.name + " " + player.cardsInHand.indexOf(card));
+	var index = player.cardsInHand.indexOf(card.name);
+	console.dir(card);
+	console.dir(player.cardsInHand);
+	var check = player.cardsInHand[0] === card;
+	console.log(check);
 	
-	var opp = findOpponent(player, player.socket);
-	player.socket.emit("updateCards", 
+	for(var i = 0;i<player.cardsInHand.length;i++)
 	{
-		player: player.cardsInHand,
-		opp: Object.keys(opp.cardsInHand).length
-	});
-	
-	opp.socket.emit("updateCards", 
-	{
-		player: opp.cardsInHand,
-		opp: Object.keys(player.cardsInHand).length
-	});
+		if(player.cardsInHand[i].name == card.name)
+		{
+			player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
+			updatePlayer(player);
+			console.dir(player.cardsInHand);
+			
+			var opp = findOpponent(player, player.socket);
+			player.socket.emit("updateCards", 
+			{
+				player: player.cardsInHand,
+				opp: Object.keys(opp.cardsInHand).length
+			});
+			
+			opp.socket.emit("updateCards", 
+			{
+				player: opp.cardsInHand,
+				opp: Object.keys(player.cardsInHand).length
+			});
+			break;
+		}
+	}
 	
 	
 }

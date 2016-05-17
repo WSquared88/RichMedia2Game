@@ -54,6 +54,7 @@
 		var opponent = {};
 		var board = [];
 		var cardHeld = {};
+		var cardIndex = -1;
 		var mouse = 
 		{
 			x: -1,
@@ -507,12 +508,17 @@
 					if(square != -1)
 					{
 						gridStats[square.x, square.y] = cardHeld;
+						cardHeld.hovering = false;
 						
 						var message = 
 						{
-							card: cardsInHand[0],
+							card: cardsInHand[cardIndex]
 						}
+						
+						console.log("removing " + cardHeld.name);
 						socket.emit("useCard", message);
+						cardHeld = {};
+						cardIndex = -1;
 					}
 				}
 				else
@@ -522,10 +528,12 @@
 					if(index != -1)
 					{
 						cardHeld = cardsInHand[index];
+						cardIndex = index;
 					}
 					else
 					{
 						cardHeld = {};
+						cardIndex = -1;
 					}
 				}
 			}
