@@ -7,7 +7,7 @@ var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 
 app.listen(PORT);
 
-var board = {};
+var boards = {};
 var rooms = {};
 var roomNum = 0;
 var players = {};
@@ -125,6 +125,14 @@ function enterRoom(player)
 		players: []
 	};
 	
+	var board = new Array(5);
+	for(var i = 0;i<board.length;i++)
+	{
+		board[i] = new Array(board.length);
+	}
+	
+	boards[roomName] = board;
+	
 	rooms[roomName] = room;
 	rooms[roomName].players[player.id] = player;
 	
@@ -146,7 +154,8 @@ function generateDeck(id)
 			width: 150,
 			height: 200,
 			posX: 0,
-			posY: 0
+			posY: 0,
+			hovering: false
 		};
 	}
 	console.log("New Deck: ");
@@ -242,6 +251,8 @@ function useCard(player, card)
 		player: opp.cardsInHand,
 		opp: Object.keys(player.cardsInHand).length
 	});
+	
+	
 }
 
 //If the player has an opponent then it returns them, otherwise it returns nothing.
@@ -314,10 +325,10 @@ io.on("connection", function(socket)
 		socket.emit("connected", message);
 	});
 	
-	socket.on("useCard", function(card)
+	socket.on("useCard", function(data)
 	{
 		console.log("start to use a card");
-		useCard(players[socket.id], card);
+		useCard(players[socket.id], data.card, data.x, data.y);
 	});
 	
 	socket.on("nextTurn", function(player)
