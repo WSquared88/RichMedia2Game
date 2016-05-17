@@ -235,6 +235,12 @@
 			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
 			ctx.fillText("Left click to use a card!", 10, 90);
 			
+			if(cardIndex != -1)
+			{
+				ctx.textAlign = "right";
+				ctx.fillText("Right click to let go of your card", ctx.canvas.width - 10, 60);
+			}
+			
 			//cards
 			for(var i = 0;i<cardsInHand.length;i++)
 			{
