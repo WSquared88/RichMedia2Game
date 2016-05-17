@@ -1,0 +1,10 @@
+diff a/client/client.html b/client/client.html	(rejected hunks)
+@@ -79,7 +79,7 @@
+ 				ctx.drawImage(bk,0,0, canvas.width, canvas.height);
+ 			}
+ 			
+-			//menu
++			
+ 			ctx.strokeStyle = "black";
+ 			ctx.fillStyle = "CornFlowerBlue";
+ 			ctx.lineWidth = 5;

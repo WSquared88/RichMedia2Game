@@ -52,9 +52,22 @@
 		var dIsPressed = false;
 		var myTurn = false;
 		var opponent = {};
+		var board = [];
+		var mouse = 
+		{
+			x: -1,
+			y: -1
+		};
 		
 		var bk = new Image();
 		var bkLoaded = false;
+		
+		var player = {
+            id: 0,
+			time: new Date().getTime(),
+			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)",
+			points: 0
+        };
 		
 		//default size, reset later based on screen res
 		var fontSize = "20px";
@@ -160,6 +173,12 @@
 				ctx.fillStyle = "black";
 				ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
 				ctx.fillStyle = "#93CCEA";
+				
+				if(cardsInHand[i].hovering)
+				{
+					ctx.fillStyle = "#008000";
+				}
+				
 				ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
 				ctx.textAlign = "center";
 				ctx.fillStyle = "black";
@@ -212,6 +231,12 @@
 		function update()
 		{
 			animationID = requestAnimationFrame(update);
+			
+			for(var i = 0;i<cardsInHand.length;i++)
+			{
+				cardsInHand[i].hovering = false;
+			}
+			
 			if(wIsPressed)
 			{
 				//square.y -= 3;
@@ -235,11 +260,35 @@
 			}
 			
 			sendPos();
+			
 			/*if(wIsPressed || aIsPressed || sIsPressed || dIsPressed)
 			{
 				sendPos();
 			}*/
+			
+			var index = checkCardHover();
+			
+			if(index != -1)
+			{
+				cardsInHand[index].hovering = true;
+			}
 			draw();
+		}
+		
+		function checkCardHover()
+		{
+			var foundCard = false;
+				
+			for(var i = cardsInHand.length-1;i>=0;i--)
+			{
+				var card = cardsInHand[i];
+				
+				if(mouse.x > card.posX && mouse.y > card.posY && mouse.x < card.posX + card.width && mouse.y < card.posY + card.height)
+				{
+					return i;
+				}
+			}
+			return -1;
 		}
 		
 		function sendPos()
@@ -259,6 +308,18 @@
 		{
             canvas = document.querySelector("#canvas");
             ctx = canvas.getContext("2d");
+			
+			canvas.addEventListener("mousemove", function(e)
+			{
+				var rect = canvas.getBoundingClientRect();
+				mouse = 
+				{
+					x: e.clientX - rect.left,
+					y: e.clientY - rect.top
+				};
+				
+				console.log("Moving the mouse");
+			}, false);
 			
 			ctx.canvas.width = window.innerWidth;
 			ctx.canvas.height = window.innerHeight;
@@ -390,6 +451,19 @@
 			{
 				console.log(e.clientX);//if(
 				console.log(e.clientY);
+				
+				for(var i = 0;i<board.length;i++)
+				{
+					for(var j = 0;j<board[i].length;j++)
+					{
+						//placement
+					}
+				}
+				
+				var message = 
+				{
+					card: cardsInHand[0],
+				}
 				socket.emit("useCard", cardsInHand[0]);
 			}
 			
