@@ -32,21 +32,39 @@
 	<h1 id = "title" >Springs of Albion</h1>
 	
 	<h2>Objective </h2>
-	<p> To recreate an analog board game that we’re working on in production studio in a web game, where players can matchup versus each other, play cards, and play until completion of the game.</p>
+	<p> 
+		To recreate an analog board game that we’re working on in production studio in a web game, where players can matchup versus each other, play cards, and play until completion of the game.
+	</p>
 	<h2>Technical </h2>
 	<p>
-	Our project uses Mongo, Node.js, and socket.io to support a server that provides a client for the game. On server side, rooms will take up to two clients since the game is two player. When more clients attempt to join, the server creates more rooms to hold them in rooms of two users. The server also generates a shuffled deck for each user, and when players begin their turn in game the server gives information about the card they drew to begin the turn.
+		Our project uses Mongo, Node.js, and socket.io to support a server that provides a client for the game. On server side, rooms will take up to two clients since the game is two player. When more clients attempt to join, the server creates more rooms to hold them in rooms of two users. The server also generates a shuffled deck for each user, and when players begin their turn in game the server gives information about the card they drew to begin the turn.
 	</p>
 	<p>
-	The client displays the hand of the user, without having access to their deck to avoid cheating. When a player begins their turn, they draw a card, shown by the server to them alone. The opponent can see the number of cards in the opponent’s hand. The UI displays the cards in the user’s hand, the total number of cards in hand, the number of cards in the opponent’s hand, whose turn it is, and the 7x5 board containing all the cards placed onto it. Each card is colored, green shows cards that the viewing user placed, and red shows cards the opponent placed. 
+		The client displays the hand of the user, without having access to their deck to avoid cheating. When a player begins their turn, they draw a card, shown by the server to them alone. The opponent can see the number of cards in the opponent’s hand. The UI displays the cards in the user’s hand, the total number of cards in hand, the number of cards in the opponent’s hand, whose turn it is, and the 7x5 board containing all the cards placed onto it. Each card is colored, green shows cards that the viewing user placed, and red shows cards the opponent placed. 
 	</p>
 	<h2> Gameplay</h2>
 	<p>
-	Players draw cards upon starting the turn, and can play cards from their hand. When done, they can end their turn and their opponent gets to take their turn. The full gameplay of our board game is not shown in our game. The full game rules are not implemented, but the core of card placement and card handling is functional.
+		Players draw cards upon starting the turn, and can play cards from their hand. When done, they can end their turn and their opponent gets to take their turn. The full gameplay of our board game is not shown in our game. The full game rules are not implemented, but the core of card placement and card handling is functional.
 	</p>
 	<h2> Conclusion</h2>
 	<p>
-	We completed a game that handles the technical requirements of the project while needing some improvement in the full implementation of the board game it’s based on, including card effects, card combat, and movement.
+		We completed a game that handles the technical requirements of the project while needing some improvement in the full implementation of the board game it’s based on, including card effects, card combat, and movement.
+	</p>
+	
+	<h2>Post-Mortem</h2>
+	<p>
+		We decided to use Mongo DB for the project to store the cards that the player would have access to so that the client side wasn't bogged down with all of the info. The server would send the cards that the player needed to know about to the client and the client was supposed to load the images from their local computer when they got the card, this makes the server lightweight and fast so it doesn't have to hold and transfer such large images and the player will only know about the cards that it should know about to prevent cheating. We also decided to not use an MVC architecture for the project because it didn't make sense because we were only ever on one page and all of the extra overhead of making the MVC architecture would have been wasted.</p>
+	<h2>What went well and what didn't</h2>
+	<p>
+		The server code and UI code went well and we were keeping all of the necessary info secret that we needed, the room joining code also work well so that you could only have two people in a room. What didn't go well though is trying to disconnect and destroy rooms when everyone leaves, I(Wes) had to create an entire new room system to get correct support for player disconnects and room destruction. Clearly all of the features that didn't make it into the project didn't go well. If I could do it again I would start much sooner and lower the scope of what I wanted the final project to be.
+	</p>
+	<h2>Architecture</h2>
+	<p>
+		<img src="Architecture.png">
+	</p>
+	<h2>Ending THoughts</h2>
+	<p>
+		I liked doing the server code for this project and I was interested in getting stuff working for Mongo DB, but that didn't happen unfortunately.
 	</p>
 </body>
 </html>
