@@ -76,14 +76,16 @@ function enterRoom(player)
 				{
 					numCards: Object.keys(player.cardsInHand).length,
 					numDeck: Object.keys(player.deck).length,
-					grave: player.grave
+					grave: player.grave,
+					board: boards[player.socket.room]
 				};
 				
 				var opponentStats = 
 				{
 					numCards: Object.keys(opponent.cardsInHand).length,
 					numDeck: Object.keys(opponent.deck).length,
-					grave: opponent.grave
+					grave: opponent.grave,
+					board: boards[player.socket.room]
 				};
 				
 				opponent.socket.emit("playerConnected", playerStats);
@@ -125,12 +127,12 @@ function enterRoom(player)
 		players: []
 	};
 	
-	var board = new Array(5);
-	for(var i = 0;i<board.length;i++)
+	var board  = new Array(7);
+	for(var x = 0; x < 7; x++)
 	{
-		board[i] = new Array(board.length);
+		board[x] = new Array(5);
 	}
-	
+	console.dir(board);
 	boards[roomName] = board;
 	
 	rooms[roomName] = room;
@@ -233,7 +235,7 @@ function drawCard(player)
 }
 
 //When a player plays a card remove it from their hand, put it on the board(not in yet), and activate the effect
-function useCard(player, card)
+function useCard(player, card, x, y)
 {
 	console.log("activating card effect on card "+card.name + " " + player.cardsInHand.indexOf(card));
 	
@@ -241,6 +243,10 @@ function useCard(player, card)
 	{
 		if(player.cardsInHand[i].name == card.name)
 		{
+			console.log("x " + x + " Y " + y);
+			console.dir(boards[player.socket.room]);
+			boards[player.socket.room][x][y] = card;
+			console.dir(boards[player.socket.room]);
 			player.cardsInHand.splice(i, 1);
 			updatePlayer(player);
 			console.dir(player.cardsInHand);
@@ -252,11 +258,15 @@ function useCard(player, card)
 				opp: Object.keys(opp.cardsInHand).length
 			});
 			
+			player.socket.emit("updateBoard",boards[player.socket.room]);
+			
 			opp.socket.emit("updateCards", 
 			{
 				player: opp.cardsInHand,
 				opp: Object.keys(player.cardsInHand).length
 			});
+			
+			opp.socket.emit("updateBoard",boards[player.socket.room]);
 			break;
 		}
 	}
@@ -337,7 +347,7 @@ io.on("connection", function(socket)
 	socket.on("useCard", function(data)
 	{
 		console.log("start to use a card");
-		useCard(players[socket.id], data.card);
+		useCard(players[socket.id], data.card, data.x, data.y);
 	});
 	
 	socket.on("nextTurn", function(player)

@@ -52,7 +52,6 @@
 		var dIsPressed = false;
 		var myTurn = false;
 		var opponent = {};
-		var board = [];
 		var cardHeld = {};
 		var cardIndex = -1;
 		var mouse = 
@@ -75,7 +74,7 @@
 		var fontSize = "20px";
 		var fontType = "Arial";
 		
-		var grid = [,];
+		var grid = new Array(7);
 		var gridStats = 
 		{
 			//pixel position
@@ -91,10 +90,7 @@
 		//init 2d array
 		for(var x = 0; x < 7; x++)
 		{
-			for(var y = 0; y < 5; y++)
-			{
-				gridStats[x,y] = {};
-			}
+			grid[x] = new Array(5);
 		}
 		
 		function updateScreenSizes()
@@ -162,40 +158,13 @@
 				for(var y = 0; y < 5/*gridStats.height*/; y++)
 				{
 					ctx.strokeRect(gridStats.x + gridStats.spaceWidth * x,gridStats.y + gridStats.spaceHeight * y,gridStats.spaceWidth,gridStats.spaceHeight);
-				}
-			}
-			
-			//cards
-			for(var i = 0;i<cardsInHand.length;i++)
-			{
-				ctx.fillStyle = "black";
-				
-				if(cardHeld === cardsInHand[i])
-				{
-					ctx.fillRect(mouse.x-cardsInHand[i].width/2-2, mouse.y-cardsInHand[i].height/2-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
-					ctx.fillStyle = "#93CCEA";
-					
-					ctx.fillRect(mouse.x-cardsInHand[i].width/2, mouse.y-cardsInHand[i].height/2, cardsInHand[i].width, cardsInHand[i].height);
-					ctx.textAlign = "center";
-					ctx.fillStyle = "black";
-					ctx.fillText(cardsInHand[i].name, mouse.x, mouse.y-cardsInHand[i].height/2+30);
-				}
-				else
-				{
-					ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
-					ctx.fillStyle = "#93CCEA";
-					
-					if(cardsInHand[i].hovering)
+					if(grid[x][y] && !(JSON.stringify(grid[x][y]) === JSON.stringify({})))
 					{
-						ctx.fillStyle = "#008000";
+						ctx.fillStyle = "black";
+						ctx.textAlign = "center";
+						ctx.fillText(grid[x][y].name, gridStats.x + gridStats.spaceWidth * x + gridStats.spaceWidth/2, gridStats.y + gridStats.spaceHeight * y + gridStats.spaceHeight/2);
 					}
-					ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
-					ctx.textAlign = "center";
-					ctx.fillStyle = "black";
-					ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
 				}
-				
-				//console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
 			}
 			
 			ctx.fillStyle = "black";
@@ -241,6 +210,39 @@
 			ctx.fillText("Cards: "+Object.keys(cardsInHand).length, 10, 30);
 			ctx.fillText("Opponents Cards: "+numCardsInOpponentsHand, 10, 60);
 			ctx.fillText("Left click to use a card!", 10, 90);
+			
+			//cards
+			for(var i = 0;i<cardsInHand.length;i++)
+			{
+				ctx.fillStyle = "black";
+				
+				if(cardHeld === cardsInHand[i])
+				{
+					ctx.fillRect(mouse.x-cardsInHand[i].width/2-2, mouse.y-cardsInHand[i].height/2-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
+					ctx.fillStyle = "#93CCEA";
+					
+					ctx.fillRect(mouse.x-cardsInHand[i].width/2, mouse.y-cardsInHand[i].height/2, cardsInHand[i].width, cardsInHand[i].height);
+					ctx.textAlign = "center";
+					ctx.fillStyle = "black";
+					ctx.fillText(cardsInHand[i].name, mouse.x, mouse.y-cardsInHand[i].height/2+30);
+				}
+				else
+				{
+					ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
+					ctx.fillStyle = "#93CCEA";
+					
+					if(cardsInHand[i].hovering)
+					{
+						ctx.fillStyle = "#008000";
+					}
+					ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
+					ctx.textAlign = "center";
+					ctx.fillStyle = "black";
+					ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
+				}
+				
+				//console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
+			}
 		}
 		
 		function update()
@@ -317,7 +319,7 @@
 							//console.log("We're in (" + x + "," + y + ")");
 							//console.log(cardsInHand[index]);
 							//grid[x,y] = cardsInHand[index];
-							console.log(grid[x,y]);
+							console.log(grid[x][y]);
 							return {x: x, y: y};
 						}
 					}
@@ -423,6 +425,11 @@
 				updateScreenSizes();
 			});
 			
+			socket.on("updateBoard", function(board)
+			{
+				grid = board;
+			});
+			
 			socket.on("playerConnected", function(opp)
 			{
 				console.log("An opponent connected to your room");
@@ -431,6 +438,7 @@
 				console.log("Num cards in deck: " + opp.numDeck);
 				console.log("Graveyard: " + opp.grave);
 				opponent = opp;
+				grid = opp.board;
 			});
 			
 			socket.on("playerDisconnected", function()
@@ -512,7 +520,9 @@
 						
 						var message = 
 						{
-							card: cardsInHand[cardIndex]
+							card: cardsInHand[cardIndex],
+							x: square.x,
+							y: square.y
 						}
 						
 						console.log("removing " + cardHeld.name);
