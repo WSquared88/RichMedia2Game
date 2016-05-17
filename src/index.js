@@ -18,8 +18,52 @@ var rooms = {};
 var roomNum = 0;
 var players = {};
 
+var redisURL = 
+{
+	hostname: "localhost",
+	port: 6379
+};
+
+var redisPASS;
+
+if(process.env.REDISCLOUD_URL)
+{
+	redisURL = url.parse(process.env.REDISCLOUD_URL);
+	redisPASS = redisURL.auth.split(":")[1];
+}
+
 var exp = express();
 exp.use("/assets", express.static(path.resolve(__dirname + "/../client")));
+
+exp.use(session(
+{
+	key: "sessionid",
+	store: new RedisStore(
+	{
+		host: redisURL.hostname,
+		port: redisURL.port,
+		pass: redisPASS
+	}),
+	secret: "Domo Arigato",
+	resave: true,
+	saveUninitialized: true,
+	cookie: 
+	{
+		httpOnly: true
+	}
+}));
+
+exp.disable("x-powered-by");
+exp.use(csrf());
+exp.use(function(err, req, res, next)
+{
+	if(err.code !== "EBADCSRFTOKEN")
+	{
+		return next(err);
+	}
+	
+	return;
+});
 
 //for db
 var dbURL = process.env.MONGOLAB_URI || "mongodb://localhost/Cards";

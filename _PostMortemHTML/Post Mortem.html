@@ -38,7 +38,7 @@
 	Our project uses Mongo, Node.js, and socket.io to support a server that provides a client for the game. On server side, rooms will take up to two clients since the game is two player. When more clients attempt to join, the server creates more rooms to hold them in rooms of two users. The server also generates a shuffled deck for each user, and when players begin their turn in game the server gives information about the card they drew to begin the turn.
 	</p>
 	<p>
-	The client displays the hand of the user, without having access to their deck to avoid cheating. When a player begins their turn, they draw a card, shown by the server to them alone. The opponent can see the number of cards in the opponent’s hand. The UI displays the cards in the user’s hand, the total number of cards in hand, the number of cards in the opponent’s hand, whose turn it is, and the 7x5 board. 
+	The client displays the hand of the user, without having access to their deck to avoid cheating. When a player begins their turn, they draw a card, shown by the server to them alone. The opponent can see the number of cards in the opponent’s hand. The UI displays the cards in the user’s hand, the total number of cards in hand, the number of cards in the opponent’s hand, whose turn it is, and the 7x5 board containing all the cards placed onto it. Each card is colored, green shows cards that the viewing user placed, and red shows cards the opponent placed. 
 	</p>
 	<h2> Gameplay</h2>
 	<p>
@@ -46,7 +46,7 @@
 	</p>
 	<h2> Conclusion</h2>
 	<p>
-	We completed a game that fulfills the technical requirements of the project while needing some improvement in the full implementation of the board game it’s based on.
+	We completed a game that handles the technical requirements of the project while needing some improvement in the full implementation of the board game it’s based on, including card effects, card combat, and movement.
 	</p>
 </body>
 </html>

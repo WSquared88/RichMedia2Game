@@ -103,7 +103,7 @@
 			{
 				cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
 				cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
-				console.log("Card Name: "+cardsInHand[i].name);
+				//console.log("Card Name: "+cardsInHand[i].name);
 			}
 			
 			//reposition board
@@ -349,12 +349,7 @@
 							mouse.y>gridStats.y + gridStats.spaceHeight * y &&
 							mouse.y<gridStats.y + gridStats.spaceHeight * (y + 1))
 						{
-							//stuff
-							//console.log(index);
 							//console.log("We're in (" + x + "," + y + ")");
-							//console.log(cardsInHand[index]);
-							//grid[x,y] = cardsInHand[index];
-							console.log(grid[x][y]);
 							return {x: x, y: y};
 						}
 					}
@@ -550,10 +545,8 @@
 				{
 					return;
 				}
-				
-				console.log(e.clientX);//if(
-				console.log(e.clientY);
-				
+				//console.log(e.clientX);
+				//console.log(e.clientY);
 				//This right mouse code snippet was taken from http://stackoverflow.com/questions/2405771/is-right-click-a-javascript-event
 				var isRightMB;
 				e = e || window.event;
