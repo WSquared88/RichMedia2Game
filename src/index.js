@@ -22,7 +22,7 @@ var players = {};
 var redisURL = 
 {
 	hostname: "localhost",
-	port: 6379
+	port: 43749
 };
 
 var redisPASS;
