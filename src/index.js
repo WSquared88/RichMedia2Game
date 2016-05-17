@@ -59,8 +59,8 @@ function enterRoom(player)
 	
 	for(var i = 0;i<key.length;i++)
 	{
-		console.log("looking into room "+rooms[key[i]]);
-		if(rooms[key[i]].players.length < 2)
+		console.log("looking into room "+rooms[key[i]].name);
+		if(Object.keys(rooms[key[i]].players).length < 2)
 		{
 			console.log("joining existing room " +rooms[key[i]]);
 			
@@ -236,17 +236,12 @@ function drawCard(player)
 function useCard(player, card)
 {
 	console.log("activating card effect on card "+card.name + " " + player.cardsInHand.indexOf(card));
-	var index = player.cardsInHand.indexOf(card.name);
-	console.dir(card);
-	console.dir(player.cardsInHand);
-	var check = player.cardsInHand[0] === card;
-	console.log(check);
 	
 	for(var i = 0;i<player.cardsInHand.length;i++)
 	{
 		if(player.cardsInHand[i].name == card.name)
 		{
-			player.cardsInHand.splice(player.cardsInHand.indexOf(card), 1);
+			player.cardsInHand.splice(i, 1);
 			updatePlayer(player);
 			console.dir(player.cardsInHand);
 			
