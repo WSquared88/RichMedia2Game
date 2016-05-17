@@ -14,8 +14,8 @@
 	#title
 	{
 		padding: 1em;
-		color: #27AAD6;
-		background-color: #E8D9DF;
+		color: #179AC6;
+		background-color: #A3DCFA;
 		text-align: center;
 		border: solid;
 		font-size: 50px;
@@ -92,13 +92,6 @@
 					grid[x,y] = {};
 				}
 			}
-
-        var player = {
-            id: 0,
-			time: new Date().getTime(),
-			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)",
-			points: 0
-        };
 		
 		function updateScreenSizes()
 		{
@@ -464,7 +457,7 @@
 				{
 					card: cardsInHand[0],
 				}
-				socket.emit("useCard", cardsInHand[0]);
+				socket.emit("useCard", message);
 			}
 			
 			requestAnimationFrame(update);

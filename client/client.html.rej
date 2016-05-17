@@ -1,10 +1,33 @@
 diff a/client/client.html b/client/client.html	(rejected hunks)
-@@ -79,7 +79,7 @@
- 				ctx.drawImage(bk,0,0, canvas.width, canvas.height);
- 			}
- 			
--			//menu
-+			
- 			ctx.strokeStyle = "black";
- 			ctx.fillStyle = "CornFlowerBlue";
- 			ctx.lineWidth = 5;
+@@ -100,31 +100,6 @@
+ 			points: 0
+         };
+ 		
+-		function updateScreenSizes()
+-		{
+-			//reposition cards in hand
+-			for(var i = 0;i<cardsInHand.length;i++)
+-				{
+-					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
+-					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
+-					console.log("Card Name: "+cardsInHand[i].name);
+-				}
+-			//reposition board
+-			gridStats.x = canvas.width*1/4;
+-			gridStats.y = ctx.canvas.height*9/64;
+-			gridStats.width = ctx.canvas.width/2;
+-			gridStats.height = ctx.canvas.height*9/20;
+-			gridStats.spaceWidth = gridStats.width/7;
+-			gridStats.spaceHeight = gridStats.height/5;
+-			
+-			var ratio = 11.5 / 1000.0;
+-			//console.log("ratio: " + ratio);
+-			fontSize = canvas.width * ratio;
+-			//console.log("Font Size " + fontSize);
+-			ctx.font = fontSize + "px " + fontType;
+-			//console.log(ctx.font);
+-		}
+-		
+ 		function draw()
+ 		{
+ 			ctx.fillStyle = "rgba(100, 150, 200, 1)";
