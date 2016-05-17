@@ -43,6 +43,7 @@
         var ctx;
         var socket;
 		var cardsInHand = [];
+		var field = [];
 		var numCardsInOpponentsHand = 0;
 		var points = 0;
 		var animationID;
@@ -148,7 +149,7 @@
 			ctx.strokeStyle = "black";
 			ctx.fillStyle = "#93CCEA";
 			ctx.lineWidth = 5;
-			ctx.strokeRect(gridStats.x,gridStats.y,gridStats.width,gridStats.height);
+			//ctx.strokeRect(gridStats.x,gridStats.y,gridStats.width,gridStats.height);
 			ctx.fillRect(gridStats.x,gridStats.y,gridStats.width,gridStats.height);
 			//board's gridStats
 			
@@ -157,6 +158,29 @@
 			{
 				for(var y = 0; y < 5/*gridStats.height*/; y++)
 				{
+					ctx.fillStyle = "#93CCEA";
+					for(var i = 0;i<field.length;i++)
+					{
+						if(field[i].x == x && field[i].y == y)
+						{
+							ctx.fillStyle = "green";
+							break;
+						}
+					}
+					
+					if(opponent && !(JSON.stringify(opponent) === JSON.stringify({})))
+					{
+						for(var i = 0;i<opponent.field.length;i++)
+						{
+							if(opponent.field[i].x == x && opponent.field[i].y == y)
+							{
+								ctx.fillStyle = "red";
+								break;
+							}
+						}
+					}
+					
+					ctx.fillRect(gridStats.x + gridStats.spaceWidth * x,gridStats.y + gridStats.spaceHeight * y,gridStats.spaceWidth,gridStats.spaceHeight);
 					ctx.strokeRect(gridStats.x + gridStats.spaceWidth * x,gridStats.y + gridStats.spaceHeight * y,gridStats.spaceWidth,gridStats.spaceHeight);
 					if(grid[x][y] && !(JSON.stringify(grid[x][y]) === JSON.stringify({})))
 					{
@@ -425,9 +449,11 @@
 				updateScreenSizes();
 			});
 			
-			socket.on("updateBoard", function(board)
+			socket.on("updateBoard", function(data)
 			{
-				grid = board;
+				grid = data.board;
+				field = data.field;
+				opponent.field = data.oppField;
 			});
 			
 			socket.on("playerConnected", function(opp)

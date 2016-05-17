@@ -77,7 +77,8 @@ function enterRoom(player)
 					numCards: Object.keys(player.cardsInHand).length,
 					numDeck: Object.keys(player.deck).length,
 					grave: player.grave,
-					board: boards[player.socket.room]
+					board: boards[player.socket.room],
+					field: player.field
 				};
 				
 				var opponentStats = 
@@ -85,7 +86,8 @@ function enterRoom(player)
 					numCards: Object.keys(opponent.cardsInHand).length,
 					numDeck: Object.keys(opponent.deck).length,
 					grave: opponent.grave,
-					board: boards[player.socket.room]
+					board: boards[player.socket.room],
+					field: opponent.field
 				};
 				
 				opponent.socket.emit("playerConnected", playerStats);
@@ -243,11 +245,10 @@ function useCard(player, card, x, y)
 	{
 		if(player.cardsInHand[i].name == card.name)
 		{
-			console.log("x " + x + " Y " + y);
-			console.dir(boards[player.socket.room]);
 			boards[player.socket.room][x][y] = card;
-			console.dir(boards[player.socket.room]);
+			player.field.push({x: x, y: y});
 			player.cardsInHand.splice(i, 1);
+			
 			updatePlayer(player);
 			console.dir(player.cardsInHand);
 			
@@ -258,7 +259,12 @@ function useCard(player, card, x, y)
 				opp: Object.keys(opp.cardsInHand).length
 			});
 			
-			player.socket.emit("updateBoard",boards[player.socket.room]);
+			player.socket.emit("updateBoard",
+			{
+				board: boards[player.socket.room],
+				field: player.field,
+				oppField: opp.field
+			});
 			
 			opp.socket.emit("updateCards", 
 			{
@@ -266,7 +272,12 @@ function useCard(player, card, x, y)
 				opp: Object.keys(player.cardsInHand).length
 			});
 			
-			opp.socket.emit("updateBoard",boards[player.socket.room]);
+			opp.socket.emit("updateBoard",
+			{
+				board: boards[player.socket.room],
+				field: opp.field,
+				oppField: player.field
+			});
 			break;
 		}
 	}
@@ -310,6 +321,7 @@ io.on("connection", function(socket)
 			cardsInHand: [],
 			deck: {},
 			grave: {},
+			field: [],
 			isActivePlayer: false
 		};
 		generateDeck(socket.id);
