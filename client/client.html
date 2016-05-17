@@ -536,7 +536,25 @@
 				console.log(e.clientX);//if(
 				console.log(e.clientY);
 				
-				if(JSON.stringify(cardHeld) !== JSON.stringify({}))
+				//This right mouse code snippet was taken from http://stackoverflow.com/questions/2405771/is-right-click-a-javascript-event
+				var isRightMB;
+				e = e || window.event;
+				
+				if("which" in e)
+				{
+					isRightMB = e.which == 3;
+				}
+				else if("button" in e)
+				{
+					isRightMB = e.button == 2;
+				}
+				
+				if(isRightMB)
+				{
+					cardHeld = {};
+					cardIndex = -1;
+				}
+				else if(JSON.stringify(cardHeld) !== JSON.stringify({}))
 				{
 					var square = checkOnGrid();
 					if(square != -1)
@@ -572,6 +590,12 @@
 						cardIndex = -1;
 					}
 				}
+			}
+			
+			document.oncontextmenu = function(e)
+			{
+				e.preventDefault();
+				return false;
 			}
 			
 			requestAnimationFrame(update);
