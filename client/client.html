@@ -53,6 +53,7 @@
 		var myTurn = false;
 		var opponent = {};
 		var board = [];
+		var cardHeld = {};
 		var mouse = 
 		{
 			x: -1,
@@ -74,7 +75,8 @@
 		var fontType = "Arial";
 		
 		var grid = [,];
-		var gridStats = {
+		var gridStats = 
+		{
 			//pixel position
 			x:0,
 			y:0,
@@ -84,24 +86,26 @@
 			spaceWidth: 0,
 			spaceHeight: 0
 		};
+		
 		//init 2d array
 		for(var x = 0; x < 7; x++)
+		{
+			for(var y = 0; y < 5; y++)
 			{
-				for(var y = 0; y < 5; y++)
-				{
-					gridStats[x,y] = {};
-				}
+				gridStats[x,y] = {};
 			}
+		}
 		
 		function updateScreenSizes()
 		{
 			//reposition cards in hand
 			for(var i = 0;i<cardsInHand.length;i++)
-				{
-					cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
-					cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
-					console.log("Card Name: "+cardsInHand[i].name);
-				}
+			{
+				cardsInHand[i].posX = (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)*i) + (((ctx.canvas.width-cardsInHand[0].width)/cardsInHand.length)/2);
+				cardsInHand[i].posY = ctx.canvas.height - (cardsInHand[i].height*2) + cardsInHand[i].height/4;
+				console.log("Card Name: "+cardsInHand[i].name);
+			}
+			
 			//reposition board
 			gridStats.x = canvas.width*1/4;
 			gridStats.y = ctx.canvas.height*9/64;
@@ -164,18 +168,32 @@
 			for(var i = 0;i<cardsInHand.length;i++)
 			{
 				ctx.fillStyle = "black";
-				ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
-				ctx.fillStyle = "#93CCEA";
 				
-				if(cardsInHand[i].hovering)
+				if(cardHeld === cardsInHand[i])
 				{
-					ctx.fillStyle = "#008000";
+					ctx.fillRect(mouse.x-cardsInHand[i].width/2-2, mouse.y-cardsInHand[i].height/2-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
+					ctx.fillStyle = "#93CCEA";
+					
+					ctx.fillRect(mouse.x-cardsInHand[i].width/2, mouse.y-cardsInHand[i].height/2, cardsInHand[i].width, cardsInHand[i].height);
+					ctx.textAlign = "center";
+					ctx.fillStyle = "black";
+					ctx.fillText(cardsInHand[i].name, mouse.x, mouse.y-cardsInHand[i].height/2+30);
+				}
+				else
+				{
+					ctx.fillRect(cardsInHand[i].posX-2, cardsInHand[i].posY-2, cardsInHand[i].width+4, cardsInHand[i].height+4);
+					ctx.fillStyle = "#93CCEA";
+					
+					if(cardsInHand[i].hovering)
+					{
+						ctx.fillStyle = "#008000";
+					}
+					ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
+					ctx.textAlign = "center";
+					ctx.fillStyle = "black";
+					ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
 				}
 				
-				ctx.fillRect(cardsInHand[i].posX, cardsInHand[i].posY, cardsInHand[i].width, cardsInHand[i].height);
-				ctx.textAlign = "center";
-				ctx.fillStyle = "black";
-				ctx.fillText(cardsInHand[i].name, cardsInHand[i].posX+cardsInHand[i].width/2, cardsInHand[i].posY+30);
 				//console.log("Drawing card " + cardsInHand[i].name + " at " + cardsInHand[i].posX + " " + cardsInHand[i].posY);
 			}
 			
@@ -270,10 +288,18 @@
 			}
 			
 			//if we're in the gridStats
+			checkOnGrid();
+			//cardsInHand[index]
+			
+			draw();
+		}
+		
+		function checkOnGrid()
+		{
 			if(mouse.x>gridStats.x &&
-				mouse.x<(gridStats.x + gridStats.width) &&
-				mouse.y>gridStats.y &&
-				mouse.y<(gridStats.y + gridStats.height))
+					mouse.x<(gridStats.x + gridStats.width) &&
+					mouse.y>gridStats.y &&
+					mouse.y<(gridStats.y + gridStats.height))
 			{
 				for(var x = 0; x < (7); x++)
 				{
@@ -291,13 +317,13 @@
 							//console.log(cardsInHand[index]);
 							//grid[x,y] = cardsInHand[index];
 							console.log(grid[x,y]);
+							return {x: x, y: y};
 						}
 					}
 				}
 			}
-			//cardsInHand[index]
 			
-			draw();
+			return -1;
 		}
 		
 		function checkCardHover()
@@ -475,19 +501,33 @@
 				console.log(e.clientX);//if(
 				console.log(e.clientY);
 				
-				for(var i = 0;i<board.length;i++)
+				if(JSON.stringify(cardHeld) !== JSON.stringify({}))
 				{
-					for(var j = 0;j<board[i].length;j++)
+					var square = checkOnGrid();
+					if(square != -1)
 					{
-						//placement
+						gridStats[square.x, square.y] = cardHeld;
+						
+						var message = 
+						{
+							card: cardsInHand[0],
+						}
+						socket.emit("useCard", message);
 					}
 				}
-				
-				var message = 
+				else
 				{
-					card: cardsInHand[0],
+					var index = checkCardHover();
+				
+					if(index != -1)
+					{
+						cardHeld = cardsInHand[index];
+					}
+					else
+					{
+						cardHeld = {};
+					}
 				}
-				socket.emit("useCard", message);
 			}
 			
 			requestAnimationFrame(update);
